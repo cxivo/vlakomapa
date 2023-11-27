@@ -30,7 +30,9 @@ const sqlPromise = await initSqlJs({
   locateFile: (file) => `https://sql.js.org/dist/${file}`,
 });
 
-const dataPromise = fetch("/gtfs/tuna.sqlite").then((res) => res.arrayBuffer());
+const dataPromise = fetch("/gtfs/database.sqlite").then((res) =>
+  res.arrayBuffer()
+);
 const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
 export const db = new SQL.Database(new Uint8Array(buf));
 
