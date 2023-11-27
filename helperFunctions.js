@@ -11,6 +11,7 @@ let lines = [];
 let date = new Date();
 let filteredTrains = [];
 let foundTrainLine = null;
+let selectedStationLine = null;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // helper functions
@@ -21,7 +22,7 @@ export function timeToSeconds(time) {
     return -1;
   }
   const a = String(time).split(":");
-  return 3600 * Number(a[0]) + 60 * Number(a[1]) + Number(a[2]);
+  return 3600 * Number(a[0]) + 60 * Number(a[1]); //+ Number(a[2]);
 }
 
 function secondsToTime(seconds) {
@@ -227,11 +228,14 @@ export function refreshScene() {
 }
 
 export function loadTrains() {
+  // Warning! "WHERE trips.trip_id < 20000" was added to remove weird shapes.
+  // It might remove real trains! But who knows, it mostly just screws stuff up.
   const trains = db
     .exec(
       `SELECT trips.trip_id, trips.service_id, trips.trip_headsign, trips.trip_short_name, 
       trips.direction_id, trips.shape_id, routes.route_long_name 
       FROM trips JOIN routes ON trips.route_id = routes.route_id
+      WHERE trips.trip_id < 20000
       ORDER BY trips.trip_id`
     )[0]
     .values.map(
@@ -342,6 +346,33 @@ export function filterTrains() {
     filteredTrains = trains.filter(filter);
   }
   refreshScene();
+
+  if (stop != null) {
+    // add a line on the screen for the station
+    const material = new THREE.LineBasicMaterial({
+      color: 0x404040,
+      linewidth: 1,
+    });
+
+    const points = [
+      new THREE.Vector3(
+        getMercatorLong(stop.long),
+        0,
+        getMercatorLat(stop.lat)
+      ),
+      new THREE.Vector3(
+        getMercatorLong(stop.long),
+        20,
+        getMercatorLat(stop.lat)
+      ),
+    ];
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const line = new THREE.Line(geometry, material);
+    selectedStationLine = line;
+
+    scene.add(line);
+  }
 }
 
 let mousePressedAt = new Date();
@@ -389,10 +420,13 @@ export function selectObject(event) {
       intersects[i].object.name.startsWith("STATION") &&
       intersects[i].distance <= maxDistance
     ) {
-      document.getElementById("place-choice").value = getStopFromId(
+      const stop = getStopFromId(
         new Number(intersects[i].object.name.substring(8))
-      ).name;
+      );
+      document.getElementById("place-choice").value = stop.name;
+
       filterTrains();
+
       break;
     } else if (
       intersects[i].object.name.startsWith("TRAIN") &&
@@ -401,6 +435,8 @@ export function selectObject(event) {
       const foundTrain = getTrainFromId(
         new Number(intersects[i].object.name.substring(6))
       );
+
+      console.log("trip id: " + foundTrain.id);
 
       addTrain(foundTrain, 0, true);
       scene.updateMatrix();
@@ -419,6 +455,10 @@ export function deselectObject() {
   if (foundTrainLine != null) {
     scene.remove(foundTrainLine);
     foundTrainLine = null;
+  }
+  if (selectedStationLine != null) {
+    scene.remove(selectedStationLine);
+    selectedStationLine = null;
   }
 }
 
