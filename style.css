@@ -1,0 +1,139 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+canvas {
+  z-index: 0;
+}
+
+p {
+  z-index: 1;
+}
+
+.copyright {
+  position: absolute;
+  color: #8080ff;
+  bottom: 8px;
+  right: 16px;
+}
+
+.copyright a {
+  color: #8080ff;
+}
+
+.controls {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  border: 2px solid #8080ff;
+  padding: 8px;
+  background-color: white;
+  /* text-align: center; */
+}
+
+#stop-list-div {
+  height: 200pt;
+  max-height: 300pt;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#stop-list td {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#stop-list .time-td {
+  border-right: 1px solid black;
+}
+
+#stop-list .pass-thru {
+  color: gray;
+}
+
+.menu {
+  z-index: 2;
+  position: fixed;
+  color: #8080ff;
+
+  top: 8px;
+  left: 16px;
+  height: 10en;
+
+  overflow: hidden;
+  border: 2px solid #8080ff;
+  padding: 8px;
+  background-color: white;
+
+  /*transform: rotate(-90deg);*/
+
+  font-size: x-large;
+  padding: 8px;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+}
+
+.menu a {
+  display: block;
+  padding: 8px;
+  margin: auto;
+  text-decoration: none;
+  text-align: center;
+  color: blue;
+}
+
+.menu a:hover {
+  color: #8080ff;
+}
+
+.textual {
+  background-image: url(textures/slovensko_mercator_small.png);
+  background-clip: border-box;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.current {
+  background-color: #009f00;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.sidebar {
+  position: fixed;
+  min-width: 19em;
+  border-right: 2px solid #8080ff;
+  height: 100vh;
+  padding: auto;
+  background-color: rgba(255, 255, 255, 0.25);
+
+  display: flex;
+}
+
+.main-text {
+  margin-left: 19em;
+  padding: 32px;
+  padding-left: 10em;
+}
+
+.main-text:last-child {
+  padding-bottom: 2em;
+}
+
+.main-text a {
+  color: black;
+}
+
+#logo {
+  margin: auto;
+  display: block;
+}

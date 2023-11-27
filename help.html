@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/textures/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grafikon 3D - Návod</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="textual">
+    <div class="menu-container">
+      <nav class="menu">
+        <div><a href="index.html">O projekte</a></div>
+        <div><a class="current" href="help.html">Návod na používanie</a></div>
+        <div><a href="map.html">Mapa</a></div>
+      </nav>
+    </div>
+
+    <div class="container">
+      <section class="sidebar">
+        <img id="logo" src="textures/logo.svg" alt="logo" height="200" />
+      </section>
+
+      <article class="main-text">
+        <h1>Návod na použitie</h1>
+        <p>
+          Poviem na rovinu - stránka vyzerá pre začiatočníka a neznalého strašne
+          mätúco:
+        </p>
+        <img
+          src="textures/site-appearance.png"
+          alt="Pohľad na mapu s veľmi chaoticky-vyzerajúcimi čiarami"
+          width="50%"
+        />
+        <p>
+          Snáď po prečítaní návodu budete mať aspoň trochu tušenia, ako mapu
+          používať.
+        </p>
+
+        <h2>Na čo sa pozerám?</h2>
+        <p>
+          Vľavo hore je menu, ako ste už asi zistili. Vpravo hore je ovládanie -
+          tu si môžete vybrať, aké vlaky chcete zobraziť - je to vlastne filter
+          a je veľmi dôležitý pre prehľadnosť.
+        </p>
+        <p>
+          V strede vidíte 3D priestor, v ktorom je umiestnená mapa Slovenska a
+          farebná čiara pre každý osobný vlak, ktorý ide od zvoleného dátumu a
+          času. Áno, KAŽDÝ osobný vlak. Síce to môže byť mätúce, ale myslím, že
+          najlepšia voľba je užívateľovi dať všetky možnosti a nech si sám
+          vyberie.
+        </p>
+        <h2>Ovládací panel</h2>
+        <p>
+          Tu si filtrujete, ktoré spoje sa vám zobrazia - vidieť všetko naraz je
+          predsa len mätúce. Môžete si nastaviť:
+        </p>
+        <ul>
+          <li>
+            <p>
+              Kategórie vlakov - ktoré kategórie vlakov sa budú na mape
+              zobrazovať - ak hľadáte napríklad iba vlaky, ktorými možno
+              cestovať zdarma, nechajte si iba Os, Zr, REX, R a Ex. Farba čiar
+              vlakov na mape tiež nie je len náhodná, odvíja sa práve od
+              kategórie vlaku:
+            </p>
+            <ul>
+              <li>
+                Os - osobný vlak - <span style="color: #0000ff">modrá</span>
+              </li>
+              <li>
+                Zr - zrýchlený vlak -
+                <span style="color: #007fff">svetlejšia modrá</span>
+              </li>
+              <li>
+                REX - regionálny expres -
+                <span style="color: #ff7f00">oranžová</span>
+              </li>
+              <li>R - rýchlik - <span style="color: #ff0000">červená</span></li>
+              <li>Ex - expres - <span style="color: #009f00">zelená</span></li>
+              <li>
+                EC - Eurocity - <span style="color: #800080">fialová</span>
+              </li>
+              <li>
+                IC - Intercity - <span style="color: #7f9fff">bledomodrá</span>
+              </li>
+              <li>
+                SC - Supercity -
+                <span style="color: #ff009f"
+                  >ružová? (neviem, som trochu farboslepý)</span
+                >
+              </li>
+              <li>
+                EN - Euronight - <span style="color: #00007f">tmavomodrá</span>
+              </li>
+              <li>RJX - Regiojet - <span style="color: #ffff00">žltá</span></li>
+              <li>
+                neurčené alebo iné vlaky sú -
+                <span style="color: #7f7f7f">sivou.</span>
+              </li>
+            </ul>
+            <p>
+              Farby som sa snažil dávať zväčša podobné ako majú iné nástroje,
+              napríklad vyhľadávač cestovných poriadkov CGTransit.
+            </p>
+          </li>
+          <li>
+            <p>
+              Dátum a čas - nenazval by som to úplne filtrom, keďže vlakov z
+              obrazovky veľmi neubudne (ak si teda nenavolíte štátny sviatok),
+              ale je to dôležité na orientáciu. Mapa funguje tak, že navolený
+              dátum a čas je reprezentovaný práve mapou Slovenska - kde čiara
+              pretína mapu, tam by podľa plánu mal v tom čase vlak byť. Ak teda
+              čiara vlaku pretína mapu niekde medzi Trnavou a Brestovanmi, tak
+              tam by vlak mal byť. Čiara nad mapou ukazuje, kadiaľ vlak ešte
+              pôjde. Vertikálne čiary nastávajú nad stanicami, kde vlak dlhšie
+              stojí - niekedy pekne vidno, ako sa na jednokoľajke dva vlaky
+              vyhýbajú. Ak máte problém si to predstaviť, odporúčam posúvať si
+              čas a sústrediť sa len na miesta, kde čiary pretínajú mapu.
+            </p>
+            <p>
+              Posúvať čas je možné aj držaním SHIFTu a scrollovaním nad mapou -
+              toto je vhodné hlavne na malé posuny o pár hodín dopredu či späť.
+            </p>
+          </li>
+          <li>
+            <p>
+              Filter na stanice - dosť dôležitá fičúra - môžete si filtrovať
+              vlaky podľa staníc, cez ktoré idú. Presnejšie, môžete si filtrovať
+              vlaky ktoré:
+            </p>
+            <ul>
+              <li>Začínajú cestu v konkrétnej stanici</li>
+              <li>Končia cestu v konkrétnej stanici</li>
+              <li>Zastavujú v stanici (teda, dá sa nastúpiť/vystúpiť)</li>
+              <li>
+                Prechádzajú cez stanicu (všetky cez ktoré prechádza, aj keď
+                nezastavuje)
+              </li>
+            </ul>
+            <p>
+              Do vyhľadávacieho okienka začnite písať názov stanice, potom si
+              môžete vybrať z ponúkaného zoznamu staníc na mape.
+            </p>
+            <p>
+              Sú tu iba stanice, v ktorých nejaký vlak zastavuje - Veľký Krtíš
+              alebo Turňu nad Bodvou tu nenájdete (a už duplom nie Modru, kde
+              napriek peknej piesni od Elánu ani nevedie trať).
+            </p>
+            <p>
+              Vybrať stanicu taktiež možno kliknutím na modrý označník stanice
+              na mape.
+            </p>
+            <p>
+              Filter odstránite buď zmazaním obsahu vyhľadávacieho políčka alebo
+              stlačením klávesy ESC.
+            </p>
+          </li>
+          <li>
+            Informácie o vlaku - keď kliknete na konkrétnu čiaru vlaku, tu sa
+            vám zobrazí info o vlaku - odkiaľ kam ide, ako sa volá, odkedy
+            dokedy ide, cez aké zastávky ide, kedy tam príde a odíde a či v nich
+            zastavuje. Myslím že sa dá intuitívne domyslieť, že v sivých
+            zastávkach bez uvedeného času vlak nezastavuje.
+          </li>
+        </ul>
+        <h2>Mapa</h2>
+        <p>
+          Ako som už mnohokrát písal, na obrazovke vidíte horizontálne mapu -
+          teda geografickú polohu vlaku - a vertikálne časovú polohu vlaku.
+          Kliknutím na stanicu nastavíte filter na vlaky, ako som písal v sekcii
+          vyššie. Kliknutím na čiaru vlaku zobrazíte k nemu viac info. Ak sa
+          neviete trafiť, priblížte sa k nemu (duh!).
+        </p>
+        <p>
+          Držaním ľavého tlačítka a pohybom myšli rotujete okolo miesta, kde sa
+          pozeráte. Držaním pravého tlačítka a pohybom sa hýbete vodorovne po
+          mape. Scrollovaním (gúľaním, aby som hovoril po slovensky :P)
+          približujete/odďaľujete. Shift + scrollovaním posúvate čas - hýbete sa
+          teda vertikálne. Ak omylom nastavíte filter, stlačte len ESC.
+        </p>
+      </article>
+    </div>
+  </body>
+</html>

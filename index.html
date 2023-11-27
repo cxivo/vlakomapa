@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/textures/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grafikon 3D - Opis</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="textual">
+    <div class="menu-container">
+      <nav class="menu">
+        <div><a class="current" href="index.html">O projekte</a></div>
+        <div><a href="help.html">Návod na používanie</a></div>
+        <div><a href="map.html">Mapa</a></div>
+      </nav>
+    </div>
+
+    <div class="container">
+      <section class="sidebar">
+        <img id="logo" src="textures/logo.svg" alt="logo" height="200" />
+      </section>
+
+      <article class="main-text">
+        <h1>Grafikon - teraz v 3D!</h1>
+        <p>
+          Viem, znie to ako hláška spred 10 rokov, z časov, keď boli kiná plné
+          3D filmov a všetci si začali kupovať 3D televízory a tie červeno-modré
+          okuliare. Ale nenechajte sa odradiť názvom.
+        </p>
+        <h2>Čo to vôbec má byť?</h2>
+        <p>
+          Určite ste už videli
+          <a href="https://www.zssk.sk/cestovny-poriadok/"
+            >grafikon v textovej podobe</a
+          >
+          - je to taká tabuľka so zastávkami a časmi odchodov. Pre bežné
+          používanie je viac než dostatočný, ale ja veru nie som bežný
+          používateľ - chcel som nejak lepšie vidieť, ako vlaky na seba
+          nadväzujú, kde sa stretávajú, aké sú možnosti prestupu z tej a tej
+          stanice... Obrázkové grafikony nie sú žiadna novinka, avšak tie sa
+          nedajú tak ľahko zohnať a väšinou sa robia len pre jednu konkrétnu
+          trať - pritom máme vlaky, ktoré idú aj cez 4 rôzne trate - napríklad
+          taký rýchlik Bojnice prejde cez trate 140, 141, 120 a 132. Avšak
+          obrázkový grafikon využíva iba dva rozmery - jeden na výšku a druhý na
+          polohu vlaku na trati. Človek je tvor trojrozmerný, o rozmer viac bez
+          problémov zvládne spracovať. Preto som vytvoril túto mapu - dva
+          rozmery venujem geografickej polohe vlaku a jeden venujem času.
+        </p>
+        <p>
+          Pre bežného používateľa je to na prvý pohľad mätúce (aby som citoval
+          svojho spolubunkujúceho, "prekliate"). Ak ste schopní porozumieť
+          obrázkovým grafikonom, tak podľa mňa budete schopní chápať aj túto
+          stránku.
+        </p>
+        <p>
+          Rovnako ako na 2D grafikone, aj tu možno vidieť ako sa vlaky míňajú na
+          jednokoľajkách, na ktorej zastávke koľko stoja, aj koľko párov ich
+          chodí za deň. Nie ste však limitovaní na jednu trať alebo úsek -
+          môžete si pozerať všetky trate naraz. Taktiež často bývajú grafikony
+          napevno vytvorené a človek si musí čítať kopy drobných poznámok aby
+          zistil, či ten a ten spoj ide aj cez víkendy alebo štátne sviatky - v
+          tomto grafikone si stačí nastaviť správny dátum a čas a zobrazí vám
+          iba aktuálne spoje.
+        </p>
+        <h2>Prečo ti to napadlo?</h2>
+        <p>
+          Nuž, rád chodím na vlakové výlety. Keď ľudia počujú "vlakový výlet",
+          predstavia si väčšinou niečo typu "Idem z Bratislavy do Pezinka, tam 4
+          hodiny pobehám mesto, zaleziem na 2h do kaviarne a potom idem späť".
+          Moji milí, veru nie. Naše výlety bývajú sofistikovanejšie - ak to nemá
+          aspoň 3 prestupy a nejde cez trasy, ktoré by žiadnemu smrteľníkovi
+          nepadli na um, tak sa to neráta. Lenže naplánovať taký 2-dňový výlet s
+          10 prestupmi nie je práve najľahšie - treba dobre poznať odkiaľ ide čo
+          a kedy, prípadne či to veľa meškáva. Vyhľadávanie v cestovných
+          poriadkoch je v tomto prípade dosť pomalé. To bola bola motivácia, aby
+          som túto stránku vyrobil - aby som sa mohol pozrieť na spoj a hneď
+          vizuálne vidieť, čo naň kde a kedy nadväzuje. Takže áno, cieľová
+          skupina tohto projektu som hlavne ja sám, plus možno kamaráti, ktorí
+          sa tiež venujú tomuto "extrémnemu železničiarstvu", ako sme náš
+          koníček nazvali po vypočutí si reakcií ľudí na naše hobby. Moja
+          cieľová skupina napríklad vie, kde sú aké mestá na Slovensku a ktoré
+          stanice sú dôležité - keby dám na mapu nápisy, už by to bolo úplne
+          neprehľadné.
+        </p>
+        <h2>Kto to vytvoril?</h2>
+        <p>
+          Marek Michalovič, aneb Ĉivo, ako projekt na
+          <a href="https://mshgrid.com/2022/10/22/webovska-grafika/"
+            >Webovskú grafiku</a
+          >. Je možné že som sa nechal trochu tou mapovou časťou uniesť na úkor
+          zvyšku projektu, ale čo už narobím :P
+        </p>
+        <h2>Použité dáta a nástroje</h2>
+        <p>
+          Mapové podklady pochádzajú z
+          <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>,
+          informácie o pohybe vlakov od <a href="https://www.zsr.sk">ŽSR</a>
+          - presnejšie z jednej skvelej databázy,
+          <a
+            href="https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip"
+            >GTFS</a
+          >, ktorú ŽSR pravidelne aktualizuje. Na vizualizáciu bola použitá
+          knižnica <a href="https://threejs.org/">three.js</a>, na pomoc so
+          spracovaním dát <a href="https://sql.js.org/">SQL.js</a> (ktorá
+          umožňuje robiť SQL dotazy aj v prehliadači, čo mi veľmi uľahčilo
+          prácu).
+        </p>
+        <p>Stránka bola naposledy aktualizovaná 2023-11-27.</p>
+      </article>
+    </div>
+  </body>
+</html>
