@@ -10,8 +10,9 @@ import { stations, trains, scene, map, db, camera } from "./main";
 let lines = [];
 let date = new Date();
 let filteredTrains = [];
-let foundTrainLine = null;
+let foundTrainLines = [];
 let selectedStationLine = null;
+let mousePressedAt = new Date();
 
 ////////////////////////////////////////////////////////////////////////////////////
 // helper functions
@@ -114,7 +115,7 @@ function addTrain(train, offset, special = false) {
     line.name = "TRAIN " + train.id;
 
     if (special) {
-      foundTrainLine = line;
+      foundTrainLines.push(line);
       line.position.y = lines[0].position.y;
     }
 
@@ -124,21 +125,25 @@ function addTrain(train, offset, special = false) {
 }
 
 function addTrainsAroundDate(date) {
+  // need to offset the timezone, because otherwise the date won't be calculated correctly
+  date = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+
   const dateStringToday = date
     .toISOString()
     .substring(0, 10)
     .replaceAll("-", "");
-  const dateStringYesterday = new Date(date.getTime() - 24 * 60 * 60)
+  const dateStringYesterday = new Date(date.getTime() - 24 * 60 * 60 * 1000)
     .toISOString()
     .substring(0, 10)
     .replaceAll("-", "");
-  const dateStringTomorrow = new Date(date.getTime() + 24 * 60 * 60)
+  const dateStringTomorrow = new Date(date.getTime() + 24 * 60 * 60 * 1000)
     .toISOString()
     .substring(0, 10)
     .replaceAll("-", "");
 
   const dates = [dateStringYesterday, dateStringToday, dateStringTomorrow];
 
+  // fetches the trains going today, yesterday and tomorrow
   for (let i = 0; i < 3; i++) {
     const trainsGoingIds = new Set(
       db
@@ -154,9 +159,10 @@ function addTrainsAroundDate(date) {
         .values.map((x) => x[0])
     );
 
+    // draws trains with the corresponding offset
     filteredTrains.forEach((train) => {
       if (trainsGoingIds.has(train.id)) {
-        addTrain(train, (i - 1) * 24 * 60 * 60);
+        addTrain(train, (1 - i) * 24 * 60 * 60);
       }
     });
   }
@@ -332,6 +338,7 @@ export function filterTrains() {
     const option = document.getElementById("way1").value;
     let filter = (x) => true;
 
+    // lambdas
     if (option == "starts") {
       filter = (x) => x.journey[0].stopId == stop.id;
     } else if (option == "ends") {
@@ -347,8 +354,8 @@ export function filterTrains() {
   }
   refreshScene();
 
+  // add a line on the screen for the station
   if (stop != null) {
-    // add a line on the screen for the station
     const material = new THREE.LineBasicMaterial({
       color: 0x404040,
       linewidth: 1,
@@ -375,11 +382,74 @@ export function filterTrains() {
   }
 }
 
-let mousePressedAt = new Date();
-
 export function mouseDown(event) {
   if (event.button == 0) {
     mousePressedAt = new Date();
+  }
+}
+
+function tryRayCast(pointerX, pointerY, radius, minDistance) {
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(new THREE.Vector2(pointerX, pointerY), camera);
+  raycaster.near = minDistance;
+  raycaster.params.Line.threshold = radius;
+
+  // casts a ray
+  const intersects = raycaster.intersectObjects(scene.children);
+
+  const maybeMap = intersects.find((x) => x.object.name == "MAP");
+  let maxDistance = Infinity;
+
+  if (maybeMap != null) {
+    maxDistance = maybeMap.distance;
+  }
+
+  // checks through all intersections
+  for (let i = 0; i < intersects.length; i++) {
+    if (
+      intersects[i].object.name.startsWith("STATION") &&
+      intersects[i].distance <= maxDistance
+    ) {
+      // STATION
+      const stop = getStopFromId(
+        new Number(intersects[i].object.name.substring(8))
+      );
+      document.getElementById("place-choice").value = stop.name;
+
+      filterTrains();
+
+      return true;
+    } else if (
+      intersects[i].object.name.startsWith("TRAIN") &&
+      intersects[i].distance <= maxDistance
+    ) {
+      // TRAIN
+      const foundTrain = getTrainFromId(
+        new Number(intersects[i].object.name.substring(6))
+      );
+
+      console.log("trip id: " + foundTrain.id);
+
+      // just to be sure, add highlights for all 3 shown days
+      addTrain(foundTrain, -24 * 60 * 60, true);
+      addTrain(foundTrain, 0, true);
+      addTrain(foundTrain, 24 * 60 * 60, true);
+
+      document.getElementById("train-info").innerHTML =
+        writeTrainInfo(foundTrain);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function deselectLine() {
+  if (foundTrainLines.length > 0) {
+    scene.remove(foundTrainLines[0]);
+    scene.remove(foundTrainLines[1]);
+    scene.remove(foundTrainLines[2]);
+    foundTrainLines = [];
   }
 }
 
@@ -390,72 +460,47 @@ export function selectObject(event) {
   }
 
   document.getElementById("train-info").innerHTML = "";
-  if (foundTrainLine != null) {
-    scene.remove(foundTrainLine);
-    foundTrainLine = null;
-  }
+  deselectLine();
 
   // calculate pointer position in normalized device coordinates
   // (-1 to +1) for both components
   const pointerX = (event.clientX / window.innerWidth) * 2 - 1;
   const pointerY = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(new THREE.Vector2(pointerX, pointerY), camera);
-  raycaster.near = 0.01;
-  raycaster.params.Points.threshold = 0.001;
-  raycaster.params.Line.threshold = 0.01;
+  // this simulates a cone ray - we want to give higher distance tolerance to lines further away
+  const attemptedRaycasts = [
+    { radius: 0.01, minDistance: 0.01 },
+    { radius: 0.02, minDistance: 0.2 },
+    { radius: 0.03, minDistance: 0.4 },
+    { radius: 0.04, minDistance: 0.6 },
+    { radius: 0.05, minDistance: 1 },
+    { radius: 0.07, minDistance: 1.5 },
+  ];
 
-  const intersects = raycaster.intersectObjects(scene.children);
-
-  const maybeMap = intersects.find((x) => x.object.name == "MAP");
-  let maxDistance = Infinity;
-
-  if (maybeMap != null) {
-    maxDistance = maybeMap.distance;
-  }
-
-  for (let i = 0; i < intersects.length; i++) {
+  // repeatedly casts rays until a hit is found
+  for (let i = 0; i < attemptedRaycasts.length; i++) {
     if (
-      intersects[i].object.name.startsWith("STATION") &&
-      intersects[i].distance <= maxDistance
+      tryRayCast(
+        pointerX,
+        pointerY,
+        attemptedRaycasts[i].radius,
+        attemptedRaycasts[i].minDistance
+      )
     ) {
-      const stop = getStopFromId(
-        new Number(intersects[i].object.name.substring(8))
-      );
-      document.getElementById("place-choice").value = stop.name;
-
-      filterTrains();
-
-      break;
-    } else if (
-      intersects[i].object.name.startsWith("TRAIN") &&
-      intersects[i].distance <= maxDistance
-    ) {
-      const foundTrain = getTrainFromId(
-        new Number(intersects[i].object.name.substring(6))
-      );
-
-      console.log("trip id: " + foundTrain.id);
-
-      addTrain(foundTrain, 0, true);
-      scene.updateMatrix();
-
-      document.getElementById("train-info").innerHTML =
-        writeTrainInfo(foundTrain);
       break;
     }
   }
 }
 
 export function deselectObject() {
+  // resets filter and info
   document.getElementById("place-choice").value = "";
   document.getElementById("train-info").innerHTML = "";
   filterTrains();
-  if (foundTrainLine != null) {
-    scene.remove(foundTrainLine);
-    foundTrainLine = null;
-  }
+
+  // removes selection highlights
+  deselectLine();
+
   if (selectedStationLine != null) {
     scene.remove(selectedStationLine);
     selectedStationLine = null;

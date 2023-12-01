@@ -54,7 +54,7 @@ export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
-  0.05,
+  0.02,
   50
 );
 
@@ -73,7 +73,7 @@ controls.update();
 
 // map
 const texture = new THREE.TextureLoader().load(
-  "textures/slovensko_mercator.png"
+  "textures/slovakia_web_mercator.png"
 );
 texture.repeat.set(1, 1);
 

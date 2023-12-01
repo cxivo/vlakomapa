@@ -42,8 +42,8 @@ export class Train {
       this.type = TRAINS.TRAIN_Zr;
     } else if (this.name.startsWith("REX")) {
       this.type = TRAINS.TRAIN_REX;
-    } else if (this.name.startsWith("R")) {
-      this.type = TRAINS.TRAIN_R;
+    } else if (this.name.startsWith("RJX")) {
+      this.type = TRAINS.TRAIN_RJX;
     } else if (this.name.startsWith("Ex")) {
       this.type = TRAINS.TRAIN_Ex;
     } else if (this.name.startsWith("IC")) {
@@ -54,8 +54,8 @@ export class Train {
       this.type = TRAINS.TRAIN_EN;
     } else if (this.name.startsWith("EC")) {
       this.type = TRAINS.TRAIN_EC;
-    } else if (this.name.startsWith("RJX")) {
-      this.type = TRAINS.TRAIN_RJX;
+    } else if (this.name.startsWith("R")) {
+      this.type = TRAINS.TRAIN_R;
     } else {
       this.type = TRAINS.TRAIN_UNKNOWN;
     }
