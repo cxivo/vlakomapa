@@ -10,7 +10,7 @@ import { stations, trains, scene, map, db, camera } from "./main";
 let lines = [];
 let date = new Date();
 let filteredTrains = [];
-let foundTrainLines = [];
+let foundTrainLine = null;
 let selectedStationLine = null;
 let mousePressedAt = new Date();
 
@@ -112,10 +112,21 @@ function addTrain(train, offset, special = false) {
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const line = new THREE.Line(geometry, material);
-    line.name = "TRAIN " + train.id;
+
+    // makes it possible to tell for which day the line applies
+    let offsetChar = "";
+    if (offset == 0) {
+      offsetChar = "0";
+    } else if (offset < 0) {
+      offsetChar = "-";
+    } else {
+      offsetChar = "+";
+    }
+
+    line.name = "TRAIN" + offsetChar + train.id;
 
     if (special) {
-      foundTrainLines.push(line);
+      foundTrainLine = line;
       line.position.y = lines[0].position.y;
     }
 
@@ -179,7 +190,6 @@ export function updateCategories() {
 
 export function setTimeFromPicker() {
   date = new Date(document.getElementById("datePicker").value);
-  date.setTime(date.getTime());
   refreshScene();
 }
 
@@ -230,6 +240,10 @@ export function refreshScene() {
 
   addTrainsAroundDate(date);
 
+  if (selectedStationLine != null) {
+    scene.add(selectedStationLine);
+  }
+
   updateVisuals();
 }
 
@@ -268,7 +282,6 @@ export function loadTrains() {
 
   // get places the train goes through
   let placePos = 0;
-  console.log(trains.length);
 
   trains.forEach((train) => {
     const places = [];
@@ -312,7 +325,6 @@ export function loadTrains() {
         noStopLength = 0;
       }
     }
-    if (placePos < 100) console.log(places);
 
     train.setJourney(places);
   });
@@ -353,6 +365,11 @@ export function filterTrains() {
     filteredTrains = trains.filter(filter);
   }
   refreshScene();
+
+  // remove the previous one
+  if (selectedStationLine != null) {
+    scene.remove(selectedStationLine);
+  }
 
   // add a line on the screen for the station
   if (stop != null) {
@@ -431,9 +448,16 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
       console.log("trip id: " + foundTrain.id);
 
       // just to be sure, add highlights for all 3 shown days
-      addTrain(foundTrain, -24 * 60 * 60, true);
-      addTrain(foundTrain, 0, true);
-      addTrain(foundTrain, 24 * 60 * 60, true);
+      let multiplier = 0;
+      if (intersects[i].object.name[5] == "0") {
+        multiplier = 0;
+      } else if (intersects[i].object.name[5] == "+") {
+        multiplier = 1;
+      } else {
+        multiplier = -1;
+      }
+
+      addTrain(foundTrain, multiplier * 24 * 60 * 60, true);
 
       document.getElementById("train-info").innerHTML =
         writeTrainInfo(foundTrain);
@@ -445,11 +469,9 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
 }
 
 function deselectLine() {
-  if (foundTrainLines.length > 0) {
-    scene.remove(foundTrainLines[0]);
-    scene.remove(foundTrainLines[1]);
-    scene.remove(foundTrainLines[2]);
-    foundTrainLines = [];
+  if (foundTrainLine != null) {
+    scene.remove(foundTrainLine);
+    foundTrainLine = null;
   }
 }
 
