@@ -255,7 +255,7 @@ export function loadTrains() {
       `SELECT trips.trip_id, trips.service_id, trips.trip_headsign, trips.trip_short_name, 
       trips.direction_id, trips.shape_id, routes.route_long_name 
       FROM trips JOIN routes ON trips.route_id = routes.route_id
-      WHERE trips.trip_id < 20000
+      WHERE trips.trip_id < 20000000
       ORDER BY trips.trip_id`
     )[0]
     .values.map(

@@ -1,0 +1,6 @@
+Download GTFS from
+https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip
+
+Open terminal in the folder
+
+cat commands.txt | sqlite3 database.sql

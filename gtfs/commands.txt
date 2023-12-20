@@ -1,0 +1,77 @@
+.mode csv
+.import ./stops.txt stops1
+.import ./stop_times.txt stop_times1
+.import ./trips.txt trips1
+.import ./shapes.txt shapes1
+.import ./calendar_dates.txt dates1
+.import ./routes.txt routes1
+
+
+CREATE TABLE IF NOT EXISTS "stops"(
+  "stop_id" INT,
+  "stop_name" TEXT,
+  "stop_lat" TEXT,
+  "stop_lon" TEXT,
+  "stop_code" TEXT,
+  "location_type" INT,
+  "parent_station" INT,
+  "wheelchair_boarding" TEXT
+);
+CREATE TABLE IF NOT EXISTS "stop_times"(
+  "trip_id" INT,
+  "stop_id" INT,
+  "arrival_time" TEXT,
+  "departure_time" TEXT,
+  "stop_sequence" INT,
+  "pickup_type" INT,
+  "drop_off_type" INT,
+  "shape_dist_traveled" TEXT
+);
+CREATE TABLE IF NOT EXISTS "trips"(
+  "route_id" INT,
+  "trip_id" INT,
+  "service_id" INT,
+  "trip_headsign" TEXT,
+  "trip_short_name" TEXT,
+  "direction_id" INT,
+  "block_id" INT,
+  "shape_id" INT,
+  "wheelchair_accessible" TEXT,
+  "bikes_allowed" TEXT
+);
+CREATE TABLE IF NOT EXISTS "shapes"(
+  "shape_id" INT,
+  "shape_pt_lat" TEXT,
+  "shape_pt_lon" TEXT,
+  "shape_pt_sequence" INT
+);
+CREATE TABLE IF NOT EXISTS "dates"(
+  "service_id" INT,
+  "date" TEXT,
+  "exception_type" INT
+);
+CREATE TABLE IF NOT EXISTS "routes"(
+  "agency_id" INT,
+  "route_id" INT,
+  "route_short_name" TEXT,
+  "route_long_name" TEXT,
+  "route_type" INT,
+  "route_desc" TEXT,
+  "route_color" TEXT,
+  "route_text_color" TEXT
+);
+
+
+insert into stops select * from stops1;
+insert into stop_times select * from stop_times1;
+insert into trips select * from trips1;
+insert into shapes select * from shapes1;
+insert into dates select * from dates1;
+insert into routes select * from routes1;
+
+drop table stops1;
+drop table stop_times1;
+drop table trips1;
+drop table shapes1;
+drop table dates1;
+drop table routes1;
