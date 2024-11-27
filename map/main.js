@@ -27,7 +27,7 @@ import databaseUrl from "../gtfs/database.sqlite";
 ////////////////////////////////////////////////////////////////////////////////////
 
 async function sqlAwaiter(what) {
-  return await Promise.all(what);
+  return await what;
 }
 
 // loading data
@@ -36,7 +36,8 @@ const sqlPromise = initSqlJs({
 });
 
 const dataPromise = fetch(databaseUrl).then((res) => res.arrayBuffer());
-const [SQL, buf] = sqlAwaiter([sqlPromise, dataPromise]);
+const SQL = sqlAwaiter(sqlPromise);
+const buf = sqlAwaiter(dataPromise);
 export const db = new SQL.Database(new Uint8Array(buf));
 
 const date1 = new Date();
