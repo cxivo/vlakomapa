@@ -20,6 +20,7 @@ import {
 import { Station, Train, PlaceTime } from "./railwayObjects.js";
 import { TRAINS } from "./trainTypes.js";
 import { IMAGE_HEIGHT, IMAGE_WIDTH } from "./mapFunctions.js";
+import databaseUrl from "../gtfs/database.sqlite";
 
 ////////////////////////////////////////////////////////////////////////////////////
 // data part
@@ -34,9 +35,7 @@ const sqlPromise = initSqlJs({
   locateFile: (file) => `https://sql.js.org/dist/${file}`,
 });
 
-const dataPromise = fetch("../gtfs/database.sqlite").then((res) =>
-  res.arrayBuffer()
-);
+const dataPromise = fetch(databaseUrl).then((res) => res.arrayBuffer());
 const [SQL, buf] = sqlAwaiter([sqlPromise, dataPromise]);
 export const db = new SQL.Database(new Uint8Array(buf));
 
