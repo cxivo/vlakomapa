@@ -17,8 +17,8 @@ import {
   deselectObject,
   shiftTime,
 } from "./helperFunctions.js";
-import { Station, Train, PlaceTime } from "./railwayObjects";
-import { TRAINS } from "./trainTypes";
+import { Station, Train, PlaceTime } from "./railwayObjects.js";
+import { TRAINS } from "./trainTypes.js";
 import { IMAGE_HEIGHT, IMAGE_WIDTH } from "./mapFunctions.js";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ const sqlPromise = await initSqlJs({
   locateFile: (file) => `https://sql.js.org/dist/${file}`,
 });
 
-const dataPromise = fetch("/gtfs/database.sqlite").then((res) =>
+const dataPromise = fetch("../gtfs/database.sqlite").then((res) =>
   res.arrayBuffer()
 );
 const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
@@ -73,7 +73,7 @@ controls.update();
 
 // map
 const texture = new THREE.TextureLoader().load(
-  "textures/slovakia_web_mercator.png"
+  "../textures/slovakia_web_mercator.png"
 );
 texture.repeat.set(1, 1);
 
