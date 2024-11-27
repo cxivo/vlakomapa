@@ -25,15 +25,19 @@ import { IMAGE_HEIGHT, IMAGE_WIDTH } from "./mapFunctions.js";
 // data part
 ////////////////////////////////////////////////////////////////////////////////////
 
+async function sqlAwaiter(what) {
+  return await Promise.all(what);
+}
+
 // loading data
-const sqlPromise = await initSqlJs({
+const sqlPromise = initSqlJs({
   locateFile: (file) => `https://sql.js.org/dist/${file}`,
 });
 
 const dataPromise = fetch("../gtfs/database.sqlite").then((res) =>
   res.arrayBuffer()
 );
-const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
+const [SQL, buf] = sqlAwaiter([sqlPromise, dataPromise]);
 export const db = new SQL.Database(new Uint8Array(buf));
 
 const date1 = new Date();
