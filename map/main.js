@@ -21,6 +21,7 @@ import { Station, Train, PlaceTime } from "./railwayObjects.js";
 import { TRAINS } from "./trainTypes.js";
 import { IMAGE_HEIGHT, IMAGE_WIDTH } from "./mapFunctions.js";
 import databaseUrl from "../gtfs/database.sqlite";
+import slovakiaMap from "../textures/slovakia_web_mercator.png";
 
 ////////////////////////////////////////////////////////////////////////////////////
 // data part
@@ -73,9 +74,7 @@ export const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 
 // map
-const texture = new THREE.TextureLoader().load(
-  "../textures/slovakia_web_mercator.png"
-);
+const texture = new THREE.TextureLoader().load(slovakiaMap);
 texture.repeat.set(1, 1);
 
 const geometry = new THREE.PlaneGeometry(IMAGE_WIDTH, IMAGE_HEIGHT);
