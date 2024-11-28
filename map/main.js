@@ -26,18 +26,15 @@ import databaseUrl from "../gtfs/database.sqlite";
 // data part
 ////////////////////////////////////////////////////////////////////////////////////
 
-async function sqlAwaiter(what) {
-  return await what;
-}
-
 // loading data
 const sqlPromise = initSqlJs({
   locateFile: (file) => `https://sql.js.org/dist/${file}`,
 });
 
 const dataPromise = fetch(databaseUrl).then((res) => res.arrayBuffer());
-const SQL = sqlAwaiter(sqlPromise);
-const buf = sqlAwaiter(dataPromise);
+const SQL = await sqlPromise;
+const buf = await dataPromise;
+
 export const db = new SQL.Database(new Uint8Array(buf));
 
 const date1 = new Date();
