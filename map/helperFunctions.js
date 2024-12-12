@@ -482,6 +482,7 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
 
       document.getElementById("train-info").innerHTML =
         writeTrainInfo(foundTrain);
+      document.getElementById("train-info").style.display = "block";
       return true;
     }
   }
@@ -503,6 +504,7 @@ export function selectObject(event) {
   }
 
   document.getElementById("train-info").innerHTML = "";
+  document.getElementById("train-info").style.display = "none";
   deselectLine();
 
   // calculate pointer position in normalized device coordinates
@@ -539,6 +541,7 @@ export function deselectObject() {
   // resets filter and info
   document.getElementById("place-choice").value = "";
   document.getElementById("train-info").innerHTML = "";
+  document.getElementById("train-info").style.display = "none";
   filterTrains();
 
   // removes selection highlights

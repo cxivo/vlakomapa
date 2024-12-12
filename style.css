@@ -32,9 +32,21 @@ p {
   /* text-align: center; */
 }
 
+.particular-train {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  border: 2px solid #8080ff;
+  padding: 8px;
+  background-color: white;
+  z-index: 3;
+  /* text-align: center; */
+}
+
+
 #stop-list-div {
-  height: 200pt;
-  max-height: 300pt;
+  /* height: 200pt; */
+  max-height: 45vh;
   overflow-x: hidden;
   overflow-y: scroll;
 }
