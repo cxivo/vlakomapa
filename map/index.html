@@ -11,7 +11,7 @@
   <body id="map-body">
     <div id="app"></div>
 
-    <div class="particular-train" id="train-info" style="display: none;"></div>
+    <div class="particular-train" id="train-info" style="display: none"></div>
 
     <nav class="menu">
       <div><a href="../index.html">O projekte</a></div>
@@ -25,66 +25,132 @@
       od <a href="https://www.zsr.sk">ŽSR</a>
     </p>
 
-    <div class="controls">
+    <section class="controls">
       <div class="categories">
-        <p>Zobrazuj vlaky kategórií:</p>
-        <p>
-        <form>
-          <input type="checkbox" id="train_os" class="category" checked />
-          <label for="train_os" style="color: #0000ff">Os</label><br />
-          <input type="checkbox" id="train_zr" class="category" checked />
-          <label for="train_zr" style="color: #0000ff">Zr</label><br />
-          <input type="checkbox" id="train_rex" class="category" checked />
-          <label for="train_rex" style="color: #0000ff">REX</label><br />
-          <input type="checkbox" id="train_r" class="category" checked />
-          <label for="train_r" style="color: #0000ff">R</label><br />
-          <input type="checkbox" id="train_ex" class="category" checked />
-          <label for="train_ex" style="color: #0000ff">Ex</label><br />
-          <input type="checkbox" id="train_ec" class="category" checked />
-          <label for="train_ec" style="color: #0000ff">EC</label><br />
-          <input type="checkbox" id="train_ic" class="category" checked />
-          <label for="train_ic" style="color: #0000ff">IC</label><br />
-          <input type="checkbox" id="train_sc" class="category" checked />
-          <label for="train_sc" style="color: #0000ff">SC</label><br />
-          <input type="checkbox" id="train_en" class="category" checked />
-          <label for="train_en" style="color: #0000ff">EN</label><br />
-          <input type="checkbox" id="train_rjx" class="category" checked />
-          <label for="train_rjx" style="color: #0000ff">RJX</label><br />
-          <input type="checkbox" id="train_unknown" class="category" checked />
-          <label for="train_unknown" style="color: #0000ff">iný</label><br />
-        </form>
-        </p>
+        <fieldset>
+          <legend>Zobrazuj vlaky kategórií</legend>
+
+          <form class="categories">
+            <div class="os">
+              <input type="checkbox" id="train_os" class="category" checked />
+
+              <label for="train_os" class="train_category">
+                <div>✓</div>
+                <div>Os</div>
+              </label>
+            </div>
+            <div class="zr">
+              <input type="checkbox" id="train_zr" class="category" checked />
+              <label for="train_zr" class="train_category">
+                <div>✓</div>
+                <div>Zr</div>
+              </label>
+            </div>
+            <div class="rex">
+              <input type="checkbox" id="train_rex" class="category" checked />
+              <label for="train_rex" class="train_category">
+                <div>✓</div>
+                <div>REX</div>
+              </label>
+            </div>
+            <div class="r">
+              <input type="checkbox" id="train_r" class="category" checked />
+              <label for="train_r" class="train_category">
+                <div>✓</div>
+                <div>R</div>
+              </label>
+            </div>
+            <div class="ex">
+              <input type="checkbox" id="train_ex" class="category" checked />
+              <label for="train_ex" class="train_category">
+                <div>✓</div>
+                <div>Ex</div>
+              </label>
+            </div>
+            <div class="ec">
+              <input type="checkbox" id="train_ec" class="category" checked />
+              <label for="train_ec" class="train_category">
+                <div>✓</div>
+                <div>EC</div>
+              </label>
+            </div>
+            <div class="ic">
+              <input type="checkbox" id="train_ic" class="category" checked />
+              <label for="train_ic" class="train_category">
+                <div>✓</div>
+                <div>IC</div>
+              </label>
+            </div>
+            <div class="sc">
+              <input type="checkbox" id="train_sc" class="category" checked />
+              <label for="train_sc" class="train_category">
+                <div>✓</div>
+                <div>SC</div>
+              </label>
+            </div>
+            <div class="en">
+              <input type="checkbox" id="train_en" class="category" checked />
+              <label for="train_en" class="train_category">
+                <div>✓</div>
+                <div>EN</div>
+              </label>
+            </div>
+            <div class="rjx">
+              <input type="checkbox" id="train_rjx" class="category" checked />
+              <label for="train_rjx" class="train_category">
+                <div>✓</div>
+                <div>rjx</div>
+              </label>
+            </div>
+            <div class="unknown">
+              <input
+                type="checkbox"
+                id="train_unknown"
+                class="category"
+                checked
+              />
+              <label for="train_unknown" class="train_category">
+                <div>✓</div>
+                <div>neznámy</div>
+              </label>
+            </div>
+          </form>
+        </fieldset>
       </div>
-      <div class="datetime">
-        <p>
-          <button type="button" id="timeNowButton" style="display: block; margin: auto;">
-            Nastav aktuálny čas
-          </button>
-        </p>
-        <p>
-          <input
-            type="datetime-local"
-            id="datePicker"
-            name="datePicker"
-            value="2023-11-25T12:00"
-            min="1970-01-01T00:00"
-            max="2038-01-18T23:59" />
-        </p>
-      </div>
-      <div class="places">
-        <label for="place-choice">
-          <select id="way1" class="way" > 
+      <fieldset>
+        <legend>Čas</legend>
+        <div class="datetime">
+          <div>
+            <input
+              type="datetime-local"
+              id="datePicker"
+              name="datePicker"
+              value="2023-11-25T12:00"
+              min="1970-01-01T00:00"
+              max="2038-01-18T23:59"
+            />
+          </div>
+          <div id="timeNowButton" title="Nastav aktuálny čas">
+            <img src="/clock.svg" alt="" width="20" />
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Miesto</legend>
+        <div class="places">
+          <select id="way1" class="way">
             <option value="starts">Začína v</option>
             <option value="ends">Končí v</option>
             <option value="stops" selected>Stojí v</option>
             <option value="passes">Prechádza cez</option>
           </select>
-        </label><br />
-        <input list="stations-list" id="place-choice" name="place-choice" />
-        <datalist id="stations-list">
-          <option value=""></option>
-        </datalist>
-      </div>
-    </div>
+
+          <input list="stations-list" id="place-choice" name="place-choice" />
+          <datalist id="stations-list">
+            <option value=""></option>
+          </datalist>
+        </div>
+      </fieldset>
+    </section>
   </body>
 </html>
