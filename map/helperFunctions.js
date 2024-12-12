@@ -231,7 +231,7 @@ export function refreshScene() {
   scene.clear();
   lines = [];
 
-  scene.add(map);
+  scene.add(...map);
 
   // add all stations
   stations.forEach((station) => {

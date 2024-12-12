@@ -17,11 +17,7 @@ import {
   deselectObject,
   shiftTime,
 } from "./helperFunctions.js";
-import { Station, Train, PlaceTime } from "./railwayObjects.js";
-import { TRAINS } from "./trainTypes.js";
-import { IMAGE_HEIGHT, IMAGE_WIDTH } from "./mapFunctions.js";
 import databaseUrl from "../gtfs/database.sqlite";
-import slovakiaMap from "../textures/slovakia_web_mercator.png";
 
 ////////////////////////////////////////////////////////////////////////////////////
 // data part
@@ -74,15 +70,48 @@ export const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 
 // map
-const texture = new THREE.TextureLoader().load(slovakiaMap);
-texture.repeat.set(1, 1);
+const TILE_SIZE = 0.43;
 
-const geometry = new THREE.PlaneGeometry(IMAGE_WIDTH, IMAGE_HEIGHT);
-const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-material.map = texture;
-export const map = new THREE.Mesh(geometry, material);
-map.rotation.x = -Math.PI / 2;
-map.name = "MAP";
+//const geometry = new THREE.PlaneGeometry(IMAGE_WIDTH, IMAGE_HEIGHT);
+const geometry = new THREE.PlaneGeometry(TILE_SIZE, TILE_SIZE);
+
+//const minLat = 47.1, minLong = 14.5, maxLat = 50.0, maxLong = 22.4;
+const osmZoom = 10,
+  minX = 552,
+  minY = 345,
+  baseI = 8,
+  baseJ = 10;
+export let map = [];
+
+// tiles
+for (let i = 0; i < 25; i++) {
+  for (let j = 0; j < 14; j++) {
+    const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+
+    const texture = new THREE.TextureLoader().load(
+      "https://tile.openstreetmap.org/" +
+        osmZoom +
+        "/" +
+        (minX + i) +
+        "/" +
+        (minY + j) +
+        ".png"
+    );
+    texture.repeat.set(1, 1);
+    material.map = texture;
+
+    const tile = new THREE.Mesh(geometry, material);
+    tile.rotation.x = -Math.PI / 2;
+    tile.name = "MAP";
+    tile.position.set(
+      TILE_SIZE * (i - baseI) - 3.26,
+      0,
+      TILE_SIZE * (j - baseJ) + 1.08
+    );
+    map.push(tile);
+  }
+}
+
 
 const datalistPlaces = document.getElementById("stations-list");
 stations.forEach((station) => {
