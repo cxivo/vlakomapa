@@ -250,6 +250,9 @@ p {
   margin-left: 19em;
   padding: 32px;
   padding-left: 10em;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .main-text:last-child {
