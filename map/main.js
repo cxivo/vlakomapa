@@ -165,16 +165,61 @@ document
 document
   .getElementById("place-choice")
   .addEventListener("change", filterTrains);
+document.getElementById("place-choice").addEventListener("keyup", (e) => {
+  if (e.key == "Enter") {
+    console.log("keyup");
+    filterTrains();
+  }
+});
+
 document.getElementById("way1").addEventListener("change", filterTrains);
+
+function rotateCamera(direction) {
+  controls.autoRotateSpeed = direction * 20;
+  controls.autoRotate = true;
+  controls.update();
+
+  setInterval(() => {
+    controls.autoRotate = false;
+    controls.update();
+  }, 2);
+}
+
+const SCROLL_AMOUNT = 128.0;
+const ZOOM_AMOUNT = 0.025;
 
 // move time around
 document.addEventListener(
   "keydown",
   (e) => {
-    if (e.key == "Shift") {
-      controls.enabled = false;
-    } else if (e.key == "Escape") {
-      deselectObject();
+    let vector = new THREE.Vector3();
+    vector = vector.subVectors(controls.target, camera.position);
+
+    switch (e.key) {
+      case "Shift":
+        controls.enabled = false;
+        break;
+      case "Escape":
+        deselectObject();
+        break;
+      case "+":
+        shiftTime(-SCROLL_AMOUNT);
+        break;
+      case "-":
+        shiftTime(SCROLL_AMOUNT);
+        break;
+      case "ArrowUp":
+        camera.translateOnAxis(vector, ZOOM_AMOUNT);
+        break;
+      case "ArrowDown":
+        camera.translateOnAxis(vector, -ZOOM_AMOUNT);
+        break;
+      case "ArrowLeft":
+        rotateCamera(1);
+        break;
+      case "ArrowRight":
+        rotateCamera(-1);
+        break;
     }
   },
   false
@@ -185,6 +230,7 @@ document.addEventListener("wheel", (e) => {
     shiftTime(e.deltaY);
   }
 });
+
 
 document.addEventListener(
   "keyup",

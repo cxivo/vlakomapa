@@ -5,7 +5,7 @@ import initSqlJs from "sql.js";
 import { getMercatorLat, getMercatorLong } from "./mapFunctions";
 import { Station, Train, PlaceTime } from "./railwayObjects";
 import { TRAINS } from "./trainTypes";
-import { stations, trains, scene, map, db, camera } from "./main";
+import { stations, trains, scene, map, db, camera, controls } from "./main";
 
 let lines = [];
 let date = new Date();
@@ -396,6 +396,26 @@ export function filterTrains() {
     selectedStationLine = line;
 
     scene.add(line);
+
+    // animate moving there
+    const oldTarget = controls.target;
+
+    let percentage = 0.0;
+
+    let id = setInterval(frame, 5);
+
+    function frame() {
+      if (percentage >= 1.0) {
+        clearInterval(id);
+      }
+
+      controls.target.x =
+        (1 - percentage) * oldTarget.x +
+        percentage * getMercatorLong(stop.long);
+      controls.target.z =
+        (1 - percentage) * oldTarget.z + percentage * getMercatorLat(stop.lat);
+      percentage += 0.01;
+    }
   }
 }
 
@@ -404,6 +424,7 @@ export function mouseDown(event) {
     mousePressedAt = new Date();
   }
 }
+
 
 function tryRayCast(pointerX, pointerY, radius, minDistance) {
   const raycaster = new THREE.Raycaster();
