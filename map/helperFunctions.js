@@ -480,8 +480,7 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
 
       addTrain(foundTrain, multiplier * 24 * 60 * 60, true);
 
-      document.getElementById("train-info").innerHTML =
-        writeTrainInfo(foundTrain);
+      writeTrainInfo(foundTrain);
       document.getElementById("train-info").style.display = "block";
       return true;
     }
@@ -572,26 +571,35 @@ function writeTrainInfo(train) {
     '<div id="stop-list-div"><table id="stop-list">';
 
   train.journey.forEach((place) => {
+    const stopName = getStopFromId(place.stopId).name;
     if (place.doesStop) {
       text +=
-        '<tr><td class="time-td">' +
+        "<tr><td class=\"time-td\" onclick=\"const datepicker = document.getElementById('datePicker'); datepicker.value = datepicker.value.substring(0, 11) + '" +
         secondsToTime(place.arrival) +
-        '</td><td class="time-td">' +
+        "'; const e = new Event('change'); datepicker.dispatchEvent(e);\">" +
+        secondsToTime(place.arrival) +
+        "</td><td class=\"time-td\" onclick=\"const datepicker = document.getElementById('datePicker'); datepicker.value = datepicker.value.substring(0, 11) + '" +
         secondsToTime(place.departure) +
-        "</td><td>" +
-        getStopFromId(place.stopId).name +
+        "'; const e = new Event('change'); datepicker.dispatchEvent(e);\">" +
+        secondsToTime(place.departure) +
+        "</td><td class=\"td-place\" onclick=\"document.getElementById('place-choice').value = '" +
+        stopName +
+        "'; document.getElementById('way1').value = 'stops'; const e = new Event('change'); const element = document.getElementById('place-choice'); element.dispatchEvent(e); \">" +
+        stopName +
         "</td></tr>";
     } else {
       text +=
         '<tr><td class="time-td">' +
         '</td><td class="time-td">' +
-        '</td><td class="pass-thru">' +
-        getStopFromId(place.stopId).name +
+        "</td><td class=\"td-place pass-thru\" onclick=\"document.getElementById('place-choice').value = '" +
+        stopName +
+        "'; document.getElementById('way1').value = 'passes'; const e = new Event('change'); const element = document.getElementById('place-choice'); element.dispatchEvent(e); \">" +
+        stopName +
         "</td></tr>";
     }
   });
 
   text += "</div></table>";
 
-  return text;
+  document.getElementById("train-info").innerHTML = text;
 }

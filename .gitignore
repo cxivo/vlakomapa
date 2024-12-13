@@ -13,6 +13,7 @@ dist-ssr
 *.local
 poznámky.txt
 uml.png
+todo.txt
 
 # Editor directories and files
 .vscode/*

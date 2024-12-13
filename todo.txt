@@ -1,2 +1,0 @@
-- po kliknutí na zastávku v zozname zastávok vlakov ju zvýrazní
-- limit na oddialenie
