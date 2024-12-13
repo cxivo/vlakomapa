@@ -582,7 +582,7 @@ function writeTrainInfo(train) {
         secondsToTime(place.departure) +
         "'; const e = new Event('change'); datepicker.dispatchEvent(e);\">" +
         secondsToTime(place.departure) +
-        "</td><td class=\"td-place\" onclick=\"document.getElementById('place-choice').value = '" +
+        "</td><td class=\"place-td\" onclick=\"document.getElementById('place-choice').value = '" +
         stopName +
         "'; document.getElementById('way1').value = 'stops'; const e = new Event('change'); const element = document.getElementById('place-choice'); element.dispatchEvent(e); \">" +
         stopName +
@@ -591,7 +591,7 @@ function writeTrainInfo(train) {
       text +=
         '<tr><td class="time-td">' +
         '</td><td class="time-td">' +
-        "</td><td class=\"td-place pass-thru\" onclick=\"document.getElementById('place-choice').value = '" +
+        "</td><td class=\"place-td pass-thru\" onclick=\"document.getElementById('place-choice').value = '" +
         stopName +
         "'; document.getElementById('way1').value = 'passes'; const e = new Event('change'); const element = document.getElementById('place-choice'); element.dispatchEvent(e); \">" +
         stopName +

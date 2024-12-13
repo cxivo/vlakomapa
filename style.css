@@ -173,6 +173,11 @@ p {
 
 #stop-list .time-td {
   border-right: 1px solid black;
+  cursor: pointer;
+}
+
+.place-td {
+  cursor: pointer;
 }
 
 #stop-list .pass-thru {
