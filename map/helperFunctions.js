@@ -167,7 +167,7 @@ function addTrainsAroundDate(date) {
             ` AND dates.exception_type = 1
             ORDER BY trips.trip_id;`
         )[0]
-        .values.map((x) => x[0])
+        ?.values?.map((x) => x[0])
     );
 
     // draws trains with the corresponding offset
