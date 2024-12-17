@@ -1,7 +1,4 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import WebGL from "three/addons/capabilities/WebGL.js";
-import initSqlJs from "sql.js";
 import { getMercatorLat, getMercatorLong } from "./mapFunctions";
 import { Station, Train, PlaceTime } from "./railwayObjects";
 import { TRAINS } from "./trainTypes";
@@ -269,7 +266,8 @@ export function loadTrains() {
           x[6],
           Number(x[4])
         )
-    );
+    )
+    .filter((x) => !x.name.includes("/")); // Warning! this filters all through coaches, which is usually desirable (they clutter the map), but not always
 
   const allPlaces = db.exec(
     `SELECT trips.trip_id, stops.stop_id, shapes.shape_pt_sequence, stop_times.arrival_time, stop_times.departure_time 
@@ -287,7 +285,13 @@ export function loadTrains() {
     const places = [];
 
     // copy places
-    while (placePos < allPlaces.length && allPlaces[placePos][0] == train.id) {
+    while (placePos < allPlaces.length && allPlaces[placePos][0] <= train.id) {
+      // skip if train got filtered
+      if (allPlaces[placePos][0] < train.id) {
+        placePos += 1;
+        continue;
+      }
+
       const x = allPlaces[placePos];
       places.push(
         new PlaceTime(
@@ -424,7 +428,6 @@ export function mouseDown(event) {
     mousePressedAt = new Date();
   }
 }
-
 
 function tryRayCast(pointerX, pointerY, radius, minDistance) {
   const raycaster = new THREE.Raycaster();
