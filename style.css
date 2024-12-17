@@ -127,6 +127,10 @@ p {
   z-index: 1;
 }
 
+li {
+  margin: 8pt;
+}
+
 .copyright {
   position: absolute;
   color: #8080ff;
