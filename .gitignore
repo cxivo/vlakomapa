@@ -14,6 +14,8 @@ dist-ssr
 poznámky.txt
 uml.png
 todo.txt
+gtfs/database_till_2024_12.sqlite
+#gtfs/gtfs 2024-12-17
 
 # Editor directories and files
 .vscode/*
