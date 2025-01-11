@@ -88,6 +88,7 @@ for (let i = 0; i < 25; i++) {
   for (let j = 0; j < 14; j++) {
     const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 
+    // https://tiles.openrailwaymap.org/standard/
     const texture = new THREE.TextureLoader().load(
       "https://tile.openstreetmap.org/" +
         osmZoom +
