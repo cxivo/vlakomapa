@@ -558,7 +558,7 @@ export function deselectObject() {
 function writeTrainInfo(train) {
   let category = train.name.split(" ")[0];
   let number = train.name.split(" ")[1];
-  let name = train.name.split(" ")[2] ?? "";
+  let name = train.name.split(" ").slice(2).join(" ");
 
   let text =
     "<p><strong>" +
