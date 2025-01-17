@@ -332,3 +332,9 @@ section.controls {
   flex-direction: column;
   gap: 0.5rem;
 }
+
+.useful-link {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+}

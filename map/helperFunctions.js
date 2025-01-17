@@ -556,6 +556,10 @@ export function deselectObject() {
 }
 
 function writeTrainInfo(train) {
+  let category = train.name.split(" ")[0];
+  let number = train.name.split(" ")[1];
+  let name = train.name.split(" ")[2] ?? "";
+
   let text =
     "<p><strong>" +
     //train.serviceName +  doesn't work
@@ -570,8 +574,7 @@ function writeTrainInfo(train) {
     secondsToTime(train.journey[0].departure) +
     "&nbsp; - &nbsp;" +
     secondsToTime(train.journey[train.journey.length - 1].arrival) +
-    "</p>" +
-    '<div id="stop-list-div"><table id="stop-list">';
+    '</p><hr><div id="stop-list-div"><table id="stop-list">';
 
   train.journey.forEach((place) => {
     const stopName = getStopFromId(place.stopId).name;
@@ -602,7 +605,31 @@ function writeTrainInfo(train) {
     }
   });
 
-  text += "</div></table>";
+  text += "</table></div>";
+
+  text += `<hr><p>
+    <a class="useful-link" href="https://www.vagonweb.cz/razeni/vlak.php?zeme=ZSSK&kategorie=${category}&cislo=${number}&nazev=${name}&rok=${date.getFullYear()}" target="_blank">radenie</a>
+    |
+    <a class="useful-link" href="https://meskanievlakov.info/vlak/${category}/${number}/" target="_blank">meškanie</a>
+    |
+    <a id="buy-ticket" class="useful-link" href="https://predaj.zssk.sk/search" target="_blank">kúpiť lístok</a>
+  <p>`;
+
+  /*  text += `<form id="searchParamForm" name="searchParamForm" method="post" action="https://predaj.zssk.sk/search" style="display: none;"  enctype="application/x-www-form-urlencoded">
+    <input type="hidden" name="searchParamForm" value="searchParamForm">
+    <input id="fromInput" type="hidden" name="fromInput" value="BRATISLAVA" data-cy="stationFrom">
+    <input id="toInput" type="hidden" name="toInput" value="Košice" data-cy="stationTo">
+    <input id="departDate" type="hidden" name="departDate" value="17. 1. 2025">
+    <input id="departTime" type="hidden" name="departTime" value="23:25">
+    <input id="departTimeIsArrival" type="hidden" name="departTimeIsArrival" value="false">
+    </form>`; */
 
   document.getElementById("train-info").innerHTML = text;
+
+  /* document
+    .getElementById("buy-ticket")
+    .addEventListener("click", function (event) {
+      event.preventDefault(); // Prevent the default link action
+      document.getElementById("searchParamForm").submit(); // Submit the form via POST
+    }); */
 }

@@ -32,7 +32,7 @@ export class Train {
     this.serviceId = serviceId;
     this.shapeId = shapeId;
     this.destination = destination;
-    this.name = name;
+    this.name = name.replace(/\s+/g, " ").trim(); // turns multiple spaces into one
     this.direction = direction;
     this.serviceName = serviceName;
 
