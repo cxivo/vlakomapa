@@ -18,5 +18,5 @@ export default defineConfig({
       "top-level-await": true, //browsers can handle top-level-await features
     },
   },
-  assetsInclude: "**/*.sqlite",
+  assetsInclude: ["**/*.sqlite", "**/*.wasm"],
 });

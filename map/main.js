@@ -25,7 +25,7 @@ import databaseUrl from "../gtfs/database.sqlite";
 
 // loading data
 const sqlPromise = initSqlJs({
-  locateFile: (file) => `/assets/sql-wasm.wasm`,
+  locateFile: (file) => `/sql-wasm.wasm`,
 });
 
 const dataPromise = fetch(databaseUrl).then((res) => res.arrayBuffer());
