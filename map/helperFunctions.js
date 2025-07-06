@@ -195,6 +195,36 @@ export function setTimeNow() {
   refreshScene();
 }
 
+export function setLocationFromBrowser() {
+  navigator.geolocation.getCurrentPosition(
+    loc => {
+      console.log(loc);
+      centerOn(loc.coords.latitude, loc.coords.longitude);
+    }
+  );
+}
+
+function centerOn(lat, long) {
+  const oldTarget = controls.target;
+
+  let percentage = 0.0;
+
+  let id = setInterval(frame, 5);
+
+  function frame() {
+    if (percentage >= 1.0) {
+      clearInterval(id);
+    }
+
+    controls.target.x =
+      (1 - percentage) * oldTarget.x +
+      percentage * getMercatorLong(long);
+    controls.target.z =
+      (1 - percentage) * oldTarget.z + percentage * getMercatorLat(lat);
+    percentage += 0.01;
+  }
+}
+
 function updateVisuals() {
   let seconds =
     3600 * date.getHours() + 60 * date.getMinutes() + date.getSeconds();
@@ -402,24 +432,7 @@ export function filterTrains() {
     scene.add(line);
 
     // animate moving there
-    const oldTarget = controls.target;
-
-    let percentage = 0.0;
-
-    let id = setInterval(frame, 5);
-
-    function frame() {
-      if (percentage >= 1.0) {
-        clearInterval(id);
-      }
-
-      controls.target.x =
-        (1 - percentage) * oldTarget.x +
-        percentage * getMercatorLong(stop.long);
-      controls.target.z =
-        (1 - percentage) * oldTarget.z + percentage * getMercatorLat(stop.lat);
-      percentage += 0.01;
-    }
+    centerOn(stop.lat, stop.long);
   }
 }
 

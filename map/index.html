@@ -137,18 +137,23 @@
       </fieldset>
       <fieldset>
         <legend>Miesto</legend>
-        <div class="places">
-          <select id="way1" class="way">
-            <option value="starts">Začína v</option>
-            <option value="ends">Končí v</option>
-            <option value="stops" selected>Stojí v</option>
-            <option value="passes">Prechádza cez</option>
-          </select>
+        <div class="places-whole">
+          <div class="places">
+            <select id="way1" class="way">
+              <option value="starts">Začína v</option>
+              <option value="ends">Končí v</option>
+              <option value="stops" selected>Stojí v</option>
+              <option value="passes">Prechádza cez</option>
+            </select>
 
-          <input list="stations-list" id="place-choice" name="place-choice" />
-          <datalist id="stations-list">
-            <option value=""></option>
-          </datalist>
+            <input list="stations-list" id="place-choice" name="place-choice" />
+            <datalist id="stations-list">
+              <option value=""></option>
+            </datalist>
+          </div>
+          <div id="myLocationButton" title="Vycentruj na aktuálnu polohu">
+            <img src="/location-dot.svg" alt="" width="20" />
+          </div>
         </div>
       </fieldset>
     </section>

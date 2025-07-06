@@ -16,6 +16,7 @@ import {
   selectObject,
   deselectObject,
   shiftTime,
+  setLocationFromBrowser,
 } from "./helperFunctions.js";
 import databaseUrl from "../gtfs/database.sqlite";
 
@@ -190,6 +191,9 @@ document.getElementById("timeNowButton").addEventListener("click", setTimeNow);
 document
   .getElementById("datePicker")
   .addEventListener("change", setTimeFromPicker);
+
+// places
+document.getElementById("myLocationButton").addEventListener("click", setLocationFromBrowser);
 
 // filter
 document

@@ -327,6 +327,17 @@ section.controls {
   cursor: pointer;
 }
 
+.places-whole {
+  display: flex;
+  align-items: center;
+}
+
+.places-whole div:nth-child(2) {
+  margin-left: auto;
+  padding-left: 10px;
+  cursor: pointer;
+}
+
 .places {
   display: flex;
   flex-direction: column;
