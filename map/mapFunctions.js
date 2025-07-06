@@ -22,3 +22,8 @@ export function getMercatorLat(latitude) {
 export function getMercatorLong(longitude) {
   return IMAGE_WIDTH * ((longitude - MIN_LONG) / LONG_DIF - 0.5);
 }
+
+// this function sucks, is only useful for approximations 
+export function approxDistance(lat0, long0, lat1, long1) {
+  return (lat0 - lat1) * (lat0 - lat1) + (long0 - long1) * (long0 - long1);
+}

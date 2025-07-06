@@ -1,5 +1,9 @@
 import * as THREE from "three";
-import { getMercatorLat, getMercatorLong } from "./mapFunctions";
+import {
+  approxDistance,
+  getMercatorLat,
+  getMercatorLong,
+} from "./mapFunctions";
 import { Station, Train, PlaceTime } from "./railwayObjects";
 import { TRAINS } from "./trainTypes";
 import { stations, trains, scene, map, db, camera, controls } from "./main";
@@ -196,12 +200,44 @@ export function setTimeNow() {
 }
 
 export function setLocationFromBrowser() {
-  navigator.geolocation.getCurrentPosition(
-    loc => {
-      console.log(loc);
-      centerOn(loc.coords.latitude, loc.coords.longitude);
-    }
-  );
+  navigator.geolocation.getCurrentPosition((loc) => {
+    console.log(loc);
+
+    // centerOn(loc.coords.latitude, loc.coords.longitude);
+
+    // find probably closest station
+    const closest = stations.reduce((prevClosest, curr) => {
+      if (
+        approxDistance(
+          loc.coords.latitude,
+          loc.coords.longitude,
+          prevClosest.lat,
+          prevClosest.long
+        ) 
+        >=
+        approxDistance(
+          loc.coords.latitude,
+          loc.coords.longitude,
+          curr.lat,
+          curr.long
+        )
+      ) {
+        return curr;
+      } else {
+        return prevClosest;
+      }
+    });
+
+    // set it as the selected station
+    document.getElementById('place-choice').value = closest.name;
+    document.getElementById('way1').value = 'stops'; 
+
+    // manually trigger onchange (probably can be done better)
+    const e = new Event('change'); 
+    const element = document.getElementById('place-choice'); 
+    element.dispatchEvent(e); 
+
+  });
 }
 
 function centerOn(lat, long) {
@@ -217,8 +253,7 @@ function centerOn(lat, long) {
     }
 
     controls.target.x =
-      (1 - percentage) * oldTarget.x +
-      percentage * getMercatorLong(long);
+      (1 - percentage) * oldTarget.x + percentage * getMercatorLong(long);
     controls.target.z =
       (1 - percentage) * oldTarget.z + percentage * getMercatorLat(lat);
     percentage += 0.01;
