@@ -454,7 +454,7 @@ export function loadStations() {
     );
 }
 
-export function filterTrains() {
+export function filterTrainsByStation() {
   const stop = getStopFromName(document.getElementById("place-choice").value);
 
   if (stop == null) {
@@ -493,6 +493,44 @@ export function filterTrains() {
   }
 }
 
+export function filterTrainsByLine() {
+  if (foundTrainLine != null) {
+    // also keeps trains with which it is impossible to transfer, but they pass thru (or stop at) the same stations
+    const common = new Set(
+      db
+        .exec(
+          ` SELECT t1.trip_id
+            FROM trips AS t1
+            JOIN shapes AS sh1 ON sh1.shape_id = t1.shape_id 
+            JOIN stops AS st1 ON sh1.shape_pt_lat = st1.stop_lat AND sh1.shape_pt_lon = st1.stop_lon            
+            WHERE EXISTS (
+              SELECT 1 
+              FROM trips AS t2
+              JOIN shapes AS sh2 ON sh2.shape_id = t2.shape_id 
+              JOIN stops AS st2 ON sh2.shape_pt_lat = st2.stop_lat AND sh2.shape_pt_lon = st2.stop_lon
+              WHERE st2.stop_lat = st1.stop_lat AND st2.stop_lon = st1.stop_lon
+              AND t2.trip_id = ${foundTrainLine.id}
+            );`
+        )[0]
+        .values?.map((x) => x[0])
+    );
+
+    const filter = (x) => common.has(x.id);
+
+    filteredTrains = trains.filter(filter);
+    //console.log("showing " + filteredTrains.length + " trains");
+
+    refreshScene();
+
+    // remove the previous one
+    if (selectedStationLine != null) {
+      scene.remove(selectedStationLine);
+    }
+  } else {
+    filteredTrains = trains;
+  }
+}
+
 function addVerticalLine(lat, long, width, from, to) {
   const material = new THREE.LineBasicMaterial({
     color: 0x404040,
@@ -506,7 +544,6 @@ function addVerticalLine(lat, long, width, from, to) {
 
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(geometry, material);
-  line.name = "SELECTED";
   selectedStationLine = line;
 
   scene.add(line);
@@ -547,6 +584,10 @@ export function searchTrain() {
   );
 
   if (trainsGoingIds.has(foundTrain.id)) {
+    // filter maybe 
+    foundTrainLine = foundTrain;
+    filterTrainsByLine();
+
     addTrain(foundTrain, 0 * 24 * 60 * 60, true);
     writeTrainInfo(foundTrain);
     document.getElementById("train-info").style.display = "block";
@@ -566,7 +607,9 @@ export function searchTrain() {
     setTime(new Date(date.getTime() + foundTrain.journey[0].departure * 1000));
   } else {
     console.log(`Train ${foundTrain.id} isn't running on ${dateStringToday}`);
-    alert(`Vlak ${foundTrain.name} v dátum ${date.toLocaleDateString()} nepremáva.`);
+    alert(
+      `Vlak ${foundTrain.name} v dátum ${date.toLocaleDateString()} nepremáva.`
+    );
   }
 }
 
@@ -604,7 +647,7 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
       );
       document.getElementById("place-choice").value = stop.name;
 
-      filterTrains();
+      filterTrainsByStation();
 
       return true;
     } else if (
@@ -692,7 +735,7 @@ export function deselectObject() {
   document.getElementById("train-choice").value = "";
   document.getElementById("train-info").innerHTML = "";
   document.getElementById("train-info").style.display = "none";
-  filterTrains();
+  filterTrainsByStation();
 
   // removes selection highlights
   deselectLine();
@@ -709,59 +752,86 @@ function writeTrainInfo(train) {
   let name = train.name.split(" ").slice(2).join(" ");
 
   let text =
-    "<p><strong>" +
-    //train.serviceName +  doesn't work
-    getStopFromId(train.journey[0].stopId).name +
-    " - " +
-    getStopFromId(train.journey[train.journey.length - 1].stopId).name +
-    "</strong></p>" +
-    "<p>" +
-    train.name +
-    "</p>" +
-    "<p>" +
-    secondsToTime(train.journey[0].departure) +
-    "&nbsp; - &nbsp;" +
-    secondsToTime(train.journey[train.journey.length - 1].arrival) +
-    '</p><hr><div id="stop-list-div"><table id="stop-list">';
+    ` <p>
+        <strong>
+          ${getStopFromId(train.journey[0].stopId).name}
+          - 
+          ${getStopFromId(train.journey[train.journey.length - 1].stopId).name}
+        </strong>
+      </p>
+      <p class="clickable" onclick="document.getElementById('train-choice').value = '${train.name}'; 
+          document.getElementById('train-choice').dispatchEvent(new Event('change'));">
+        ${train.name}
+      </p>
+      <p>
+        ${secondsToTime(train.journey[0].departure)}
+        &nbsp; - &nbsp;
+        ${secondsToTime(train.journey[train.journey.length - 1].arrival)}
+      </p>
+      <hr>
+      <div id="stop-list-div">
+        <table id="stop-list">
+    `
 
   train.journey.forEach((place) => {
     const stopName = getStopFromId(place.stopId).name;
     if (place.doesStop) {
       text +=
-        "<tr><td class=\"time-td\" onclick=\"const datepicker = document.getElementById('datePicker'); datepicker.value = datepicker.value.substring(0, 11) + '" +
-        secondsToTime(place.arrival) +
-        "'; const e = new Event('change'); datepicker.dispatchEvent(e);\">" +
-        secondsToTime(place.arrival) +
-        "</td><td class=\"time-td\" onclick=\"const datepicker = document.getElementById('datePicker'); datepicker.value = datepicker.value.substring(0, 11) + '" +
-        secondsToTime(place.departure) +
-        "'; const e = new Event('change'); datepicker.dispatchEvent(e);\">" +
-        secondsToTime(place.departure) +
-        "</td><td class=\"place-td\" onclick=\"document.getElementById('place-choice').value = '" +
-        stopName +
-        "'; document.getElementById('way1').value = 'stops'; const e = new Event('change'); const element = document.getElementById('place-choice'); element.dispatchEvent(e); \">" +
-        stopName +
-        "</td></tr>";
+        `<tr>
+          <td class="time-td" onclick="const datepicker = document.getElementById('datePicker'); 
+            datepicker.value = datepicker.value.substring(0, 11) + '${secondsToTime(place.arrival)}'; 
+            const e = new Event('change'); 
+            datepicker.dispatchEvent(e);"
+          >
+          ${secondsToTime(place.arrival)}
+          </td>
+          <td class="time-td" onclick="const datepicker = document.getElementById('datePicker'); 
+            datepicker.value = datepicker.value.substring(0, 11) + '${secondsToTime(place.departure)}'; 
+            const e = new Event('change'); 
+            datepicker.dispatchEvent(e);"
+          >
+          ${secondsToTime(place.departure)}
+          </td>
+          <td class="place-td" onclick="document.getElementById('place-choice').value = '${stopName}'; 
+            document.getElementById('way1').value = 'stops'; 
+            const e = new Event('change'); 
+            const element = document.getElementById('place-choice'); 
+            element.dispatchEvent(e);"
+          >
+          ${stopName}
+          </td>
+        </tr>`;
     } else {
       text +=
-        '<tr><td class="time-td">' +
-        '</td><td class="time-td">' +
-        "</td><td class=\"place-td pass-thru\" onclick=\"document.getElementById('place-choice').value = '" +
-        stopName +
-        "'; document.getElementById('way1').value = 'passes'; const e = new Event('change'); const element = document.getElementById('place-choice'); element.dispatchEvent(e); \">" +
-        stopName +
-        "</td></tr>";
+        `<tr>
+          <td class="time-td">
+          </td>
+          <td class="time-td">
+          </td>
+          <td class="place-td pass-thru" onclick="document.getElementById('place-choice').value = '${stopName}';
+            document.getElementById('way1').value = 'passes'; 
+            const e = new Event('change'); 
+            const element = document.getElementById('place-choice'); 
+            element.dispatchEvent(e);"
+          >
+          ${stopName}
+          </td>
+        </tr>`;
     }
   });
 
-  text += "</table></div>";
+  text += ` </table>
+          </div>`;
 
-  text += `<hr><p>
-    <a class="useful-link" href="https://www.vagonweb.cz/razeni/vlak.php?zeme=ZSSK&kategorie=${category}&cislo=${number}&nazev=${name}&rok=${date.getFullYear()}" target="_blank">radenie</a>
-    |
-    <a class="useful-link" href="https://meskanievlakov.info/vlak/${category}/${number}/" target="_blank">meškanie</a>
-    |
-    <a id="buy-ticket" class="useful-link" href="https://predaj.zssk.sk/search" target="_blank">kúpiť lístok</a>
-  <p>`;
+  text += 
+  ` <hr>
+    <p>
+      <a class="useful-link" href="https://www.vagonweb.cz/razeni/vlak.php?zeme=ZSSK&kategorie=${category}&cislo=${number}&nazev=${name}&rok=${date.getFullYear()}" target="_blank">radenie</a>
+      |
+      <a class="useful-link" href="https://meskanievlakov.info/vlak/${category}/${number}/" target="_blank">meškanie</a>
+      |
+      <a id="buy-ticket" class="useful-link" href="https://predaj.zssk.sk/search" target="_blank">kúpiť lístok</a>
+    </p>`;
 
   /*  text += `<form id="searchParamForm" name="searchParamForm" method="post" action="https://predaj.zssk.sk/search" style="display: none;"  enctype="application/x-www-form-urlencoded">
     <input type="hidden" name="searchParamForm" value="searchParamForm">

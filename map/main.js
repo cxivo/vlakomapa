@@ -8,7 +8,7 @@ import {
   refreshScene,
   loadTrains,
   loadStations,
-  filterTrains,
+  filterTrainsByStation,
   updateCategories,
   setTimeNow,
   setTimeFromPicker,
@@ -209,11 +209,11 @@ document.getElementById("myLocationButton").addEventListener("click", setLocatio
 // filter
 document
   .getElementById("place-choice")
-  .addEventListener("change", filterTrains);
+  .addEventListener("change", filterTrainsByStation);
 document.getElementById("place-choice").addEventListener("keyup", (e) => {
   if (e.key == "Enter") {
     console.log("keyup");
-    filterTrains();
+    filterTrainsByStation();
   }
 });
 
@@ -227,7 +227,7 @@ document.getElementById("train-choice").addEventListener("keyup", (e) => {
   }
 });
 
-document.getElementById("way1").addEventListener("change", filterTrains);
+document.getElementById("way1").addEventListener("change", filterTrainsByStation);
 
 function rotateCamera(direction) {
   controls.autoRotateSpeed = direction * 20;

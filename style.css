@@ -363,3 +363,7 @@ section.controls {
   border: inset 2px gray;
   background-color: lightgray;
 }
+
+.clickable:hover {
+  cursor: pointer;
+}
