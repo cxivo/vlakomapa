@@ -550,8 +550,23 @@ export function searchTrain() {
     addTrain(foundTrain, 0 * 24 * 60 * 60, true);
     writeTrainInfo(foundTrain);
     document.getElementById("train-info").style.display = "block";
+
+    // zoom on the "center" of the selected line
+    const startStop = getStopFromId(foundTrain.journey[0].stopId);
+    const destinationStop = getStopFromId(
+      foundTrain.journey[foundTrain.journey.length - 1].stopId
+    );
+    centerOn(
+      0.5 * (startStop.lat + destinationStop.lat),
+      0.5 * (startStop.long + destinationStop.long)
+    );
+
+    // set time to departure
+    date.setHours(0, 0, 0, 0); // get number of UTC seconds till the start of the day
+    setTime(new Date(date.getTime() + foundTrain.journey[0].departure * 1000));
   } else {
     console.log(`Train ${foundTrain.id} isn't running on ${dateStringToday}`);
+    alert(`Vlak ${foundTrain.name} v dátum ${date.toLocaleDateString()} nepremáva.`);
   }
 }
 
