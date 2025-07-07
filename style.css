@@ -322,7 +322,16 @@ section.controls {
   align-items: center;
 }
 
+.datetime div {
+  padding: 2px;
+}
+
 .datetime div:nth-child(2) {
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.datetime div:nth-child(3) {
   margin-left: auto;
   cursor: pointer;
 }
@@ -348,4 +357,9 @@ section.controls {
   color: #000;
   font-weight: bold;
   text-decoration: none;
+}
+
+.pressed {
+  border: inset 2px gray;
+  background-color: lightgray;
 }

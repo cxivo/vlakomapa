@@ -17,6 +17,7 @@ import {
   deselectObject,
   shiftTime,
   setLocationFromBrowser,
+  toggleTimeNow,
 } from "./helperFunctions.js";
 import databaseUrl from "../gtfs/database.sqlite";
 
@@ -188,6 +189,7 @@ document
 
 // times
 document.getElementById("timeNowButton").addEventListener("click", setTimeNow);
+document.getElementById("keepTimeButton").addEventListener("click", toggleTimeNow);
 document
   .getElementById("datePicker")
   .addEventListener("change", setTimeFromPicker);

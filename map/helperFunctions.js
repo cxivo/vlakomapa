@@ -14,6 +14,7 @@ let filteredTrains = [];
 let foundTrainLine = null;
 let selectedStationLine = null;
 let mousePressedAt = new Date();
+let keepingTime = false;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // helper functions
@@ -190,14 +191,31 @@ export function updateCategories() {
 }
 
 export function setTimeFromPicker() {
-  date = new Date(document.getElementById("datePicker").value);
-  refreshScene();
+  setTime(new Date(document.getElementById("datePicker").value));
 }
 
 export function setTimeNow() {
-  date = new Date();
-  refreshScene();
+  setTime(new Date());
 }
+
+export function toggleTimeNow() {
+  keepingTime = !keepingTime;
+
+  if (keepingTime) {
+    setTimeNow();
+  }
+
+  document
+    .getElementById("keepTimeButton")
+    .setAttribute("class", keepingTime ? "pressed" : "");
+}
+
+////// timer
+setInterval(() => {
+  if (keepingTime) {
+    setTimeNow();
+  }
+}, 1000);
 
 export function setLocationFromBrowser() {
   navigator.geolocation.getCurrentPosition((loc) => {
@@ -213,8 +231,7 @@ export function setLocationFromBrowser() {
           loc.coords.longitude,
           prevClosest.lat,
           prevClosest.long
-        ) 
-        >=
+        ) >=
         approxDistance(
           loc.coords.latitude,
           loc.coords.longitude,
@@ -229,14 +246,13 @@ export function setLocationFromBrowser() {
     });
 
     // set it as the selected station
-    document.getElementById('place-choice').value = closest.name;
-    document.getElementById('way1').value = 'stops'; 
+    document.getElementById("place-choice").value = closest.name;
+    document.getElementById("way1").value = "stops";
 
     // manually trigger onchange (probably can be done better)
-    const e = new Event('change'); 
-    const element = document.getElementById('place-choice'); 
-    element.dispatchEvent(e); 
-
+    const e = new Event("change");
+    const element = document.getElementById("place-choice");
+    element.dispatchEvent(e);
   });
 }
 
@@ -281,6 +297,17 @@ export function shiftTime(amount) {
   date.setTime(date.getTime() - 2000 * amount);
 
   if (oldDate.getDate() != date.getDate()) {
+    refreshScene();
+  } else {
+    updateVisuals();
+  }
+}
+
+export function setTime(newDateTime) {
+  const oldDate = new Date(date);
+  date.setTime(newDateTime);
+
+  if (oldDate.getDate() != newDateTime.getDate()) {
     refreshScene();
   } else {
     updateVisuals();
@@ -442,9 +469,16 @@ export function filterTrains() {
 
   // add a line on the screen for the station
   if (stop != null) {
-    const material = new THREE.LineBasicMaterial({
+    /* const material = new THREE.LineBasicMaterial({
+      color: 0x404040,
+      linewidth: 2,
+    }); */
+    const material = new THREE.LineDashedMaterial({
       color: 0x404040,
       linewidth: 1,
+      scale: 1,
+      dashSize: 30,
+      gapSize: 100,
     });
 
     const points = [
