@@ -117,6 +117,7 @@
           </form>
         </fieldset>
       </div>
+
       <fieldset>
         <legend>Čas</legend>
         <div class="datetime">
@@ -138,6 +139,7 @@
           </div>
         </div>
       </fieldset>
+
       <fieldset>
         <legend>Miesto</legend>
         <div class="places-whole">
@@ -158,6 +160,18 @@
             <img src="/location-dot.svg" alt="" width="20" />
           </div>
         </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Názov vlaku</legend>
+        
+          <div class="train-names">
+            <input list="trains-list" id="train-choice" name="train-choice" />
+            <datalist id="trains-list">
+              <option value=""></option>
+            </datalist>
+          </div>
+          
       </fieldset>
     </section>
   </body>

@@ -50,6 +50,12 @@ function getTrainFromId(id) {
   return trains.find((x) => x.id == id);
 }
 
+function getTrainFromName(name) {
+  return trains.find(
+    (x) => x.name?.replaceAll(" ", "") == name?.replaceAll(" ", "")
+  );
+}
+
 export function getDistance(from, to) {
   const fromStop = getStopFromId(from.stopId);
   const toStop = getStopFromId(to.stopId);
@@ -68,6 +74,7 @@ function addStation(station) {
   marker.position.z = getMercatorLat(station.lat);
   marker.position.x = getMercatorLong(station.long);
   scene.add(marker);
+  // addVerticalLine(station.lat, station.long, 1, 0.05);
 }
 
 function addTrain(train, offset, special = false) {
@@ -96,6 +103,16 @@ function addTrain(train, offset, special = false) {
           getMercatorLat(stop.lat)
         )
       );
+
+      /* if (special) {
+        addVerticalLine(
+          stop.lat,
+          stop.long,
+          1,
+          -20,
+          (x.arrival - offset) * timeConstant + lines[0].position.y
+        );
+      } */
 
       // midnight fix
       if (x.departure < previousTime) {
@@ -469,39 +486,72 @@ export function filterTrains() {
 
   // add a line on the screen for the station
   if (stop != null) {
-    /* const material = new THREE.LineBasicMaterial({
-      color: 0x404040,
-      linewidth: 2,
-    }); */
-    const material = new THREE.LineDashedMaterial({
-      color: 0x404040,
-      linewidth: 1,
-      scale: 1,
-      dashSize: 30,
-      gapSize: 100,
-    });
-
-    const points = [
-      new THREE.Vector3(
-        getMercatorLong(stop.long),
-        0,
-        getMercatorLat(stop.lat)
-      ),
-      new THREE.Vector3(
-        getMercatorLong(stop.long),
-        20,
-        getMercatorLat(stop.lat)
-      ),
-    ];
-
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const line = new THREE.Line(geometry, material);
-    selectedStationLine = line;
-
-    scene.add(line);
+    addVerticalLine(stop.lat, stop.long, 1, 0, 20);
 
     // animate moving there
     centerOn(stop.lat, stop.long);
+  }
+}
+
+function addVerticalLine(lat, long, width, from, to) {
+  const material = new THREE.LineBasicMaterial({
+    color: 0x404040,
+    linewidth: width,
+  });
+
+  const points = [
+    new THREE.Vector3(getMercatorLong(long), from, getMercatorLat(lat)),
+    new THREE.Vector3(getMercatorLong(long), to, getMercatorLat(lat)),
+  ];
+
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line(geometry, material);
+  line.name = "SELECTED";
+  selectedStationLine = line;
+
+  scene.add(line);
+}
+
+export function searchTrain() {
+  deselectLine();
+
+  const trainName = document.getElementById("train-choice").value;
+  console.log(trainName);
+  const foundTrain = getTrainFromName(trainName);
+  console.log("found train: ", foundTrain);
+
+  // check whether it's running on this day
+  // need to offset the timezone, because otherwise the date won't be calculated correctly
+
+  const dateStringToday = new Date(
+    date.getTime() - date.getTimezoneOffset() * 60 * 1000
+  )
+    .toISOString()
+    .substring(0, 10)
+    .replaceAll("-", "");
+
+  // fetches the trains going today, yesterday and tomorrow
+
+  const trainsGoingIds = new Set(
+    db
+      .exec(
+        `SELECT trips.trip_id 
+            FROM dates 
+            JOIN trips ON dates.service_id = trips.service_id 
+            WHERE dates.date = ` +
+          dateStringToday +
+          ` AND dates.exception_type = 1
+            ORDER BY trips.trip_id;`
+      )[0]
+      ?.values?.map((x) => x[0])
+  );
+
+  if (trainsGoingIds.has(foundTrain.id)) {
+    addTrain(foundTrain, 0 * 24 * 60 * 60, true);
+    writeTrainInfo(foundTrain);
+    document.getElementById("train-info").style.display = "block";
+  } else {
+    console.log(`Train ${foundTrain.id} isn't running on ${dateStringToday}`);
   }
 }
 
@@ -624,6 +674,7 @@ export function selectObject(event) {
 export function deselectObject() {
   // resets filter and info
   document.getElementById("place-choice").value = "";
+  document.getElementById("train-choice").value = "";
   document.getElementById("train-info").innerHTML = "";
   document.getElementById("train-info").style.display = "none";
   filterTrains();

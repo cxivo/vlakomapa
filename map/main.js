@@ -18,6 +18,7 @@ import {
   shiftTime,
   setLocationFromBrowser,
   toggleTimeNow,
+  searchTrain,
 } from "./helperFunctions.js";
 import databaseUrl from "../gtfs/database.sqlite";
 
@@ -124,6 +125,14 @@ stations.forEach((station) => {
   );
 });
 
+const datalistTrains = document.getElementById("trains-list");
+trains.forEach((train) => {
+  datalistTrains.insertAdjacentHTML(
+    "beforeend",
+    '<option value="' + train.name + '"></option>'
+  );
+});
+
 // animation loop
 function animate() {
   requestAnimationFrame(animate);
@@ -205,6 +214,16 @@ document.getElementById("place-choice").addEventListener("keyup", (e) => {
   if (e.key == "Enter") {
     console.log("keyup");
     filterTrains();
+  }
+});
+
+document
+  .getElementById("train-choice")
+  .addEventListener("change", searchTrain);
+document.getElementById("train-choice").addEventListener("keyup", (e) => {
+  if (e.key == "Enter") {
+    console.log("keyup");
+    searchTrain();
   }
 });
 
