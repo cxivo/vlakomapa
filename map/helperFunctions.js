@@ -584,7 +584,7 @@ export function searchTrain() {
   );
 
   if (trainsGoingIds.has(foundTrain.id)) {
-    // filter maybe 
+    // filter maybe
     foundTrainLine = foundTrain;
     filterTrainsByLine();
 
@@ -751,15 +751,16 @@ function writeTrainInfo(train) {
   let number = train.name.split(" ")[1];
   let name = train.name.split(" ").slice(2).join(" ");
 
-  let text =
-    ` <p>
+  let text = ` <p>
         <strong>
           ${getStopFromId(train.journey[0].stopId).name}
           - 
           ${getStopFromId(train.journey[train.journey.length - 1].stopId).name}
         </strong>
       </p>
-      <p class="clickable" onclick="document.getElementById('train-choice').value = '${train.name}'; 
+      <p class="clickable" onclick="document.getElementById('train-choice').value = '${
+        train.name
+      }'; 
           document.getElementById('train-choice').dispatchEvent(new Event('change'));">
         ${train.name}
       </p>
@@ -771,22 +772,25 @@ function writeTrainInfo(train) {
       <hr>
       <div id="stop-list-div">
         <table id="stop-list">
-    `
+    `;
 
   train.journey.forEach((place) => {
     const stopName = getStopFromId(place.stopId).name;
     if (place.doesStop) {
-      text +=
-        `<tr>
+      text += `<tr>
           <td class="time-td" onclick="const datepicker = document.getElementById('datePicker'); 
-            datepicker.value = datepicker.value.substring(0, 11) + '${secondsToTime(place.arrival)}'; 
+            datepicker.value = datepicker.value.substring(0, 11) + '${secondsToTime(
+              place.arrival
+            )}'; 
             const e = new Event('change'); 
             datepicker.dispatchEvent(e);"
           >
           ${secondsToTime(place.arrival)}
           </td>
           <td class="time-td" onclick="const datepicker = document.getElementById('datePicker'); 
-            datepicker.value = datepicker.value.substring(0, 11) + '${secondsToTime(place.departure)}'; 
+            datepicker.value = datepicker.value.substring(0, 11) + '${secondsToTime(
+              place.departure
+            )}'; 
             const e = new Event('change'); 
             datepicker.dispatchEvent(e);"
           >
@@ -802,8 +806,7 @@ function writeTrainInfo(train) {
           </td>
         </tr>`;
     } else {
-      text +=
-        `<tr>
+      text += `<tr>
           <td class="time-td">
           </td>
           <td class="time-td">
@@ -823,14 +826,23 @@ function writeTrainInfo(train) {
   text += ` </table>
           </div>`;
 
-  text += 
-  ` <hr>
+  text += ` <hr>
     <p>
       <a class="useful-link" href="https://www.vagonweb.cz/razeni/vlak.php?zeme=ZSSK&kategorie=${category}&cislo=${number}&nazev=${name}&rok=${date.getFullYear()}" target="_blank">radenie</a>
       |
       <a class="useful-link" href="https://meskanievlakov.info/vlak/${category}/${number}/" target="_blank">meškanie</a>
       |
       <a id="buy-ticket" class="useful-link" href="https://predaj.zssk.sk/search" target="_blank">kúpiť lístok</a>
+      |
+      <a class="useful-link" href="https://cp.sk/vlak/spojenie/vysledky/?date=${date
+        .toLocaleDateString()
+        .replaceAll(" ", "")}&time=${secondsToTime(
+        train.journey[0].departure
+      )}&f=${getStopFromId(train.journey[0].stopId).name}&fc=100003&t=${
+        getStopFromId(train.journey[train.journey.length - 1].stopId).name
+      }&tc=100003" target="_blank">
+        cp.sk
+      </a>
     </p>`;
 
   /*  text += `<form id="searchParamForm" name="searchParamForm" method="post" action="https://predaj.zssk.sk/search" style="display: none;"  enctype="application/x-www-form-urlencoded">
