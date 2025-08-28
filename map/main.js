@@ -14,7 +14,7 @@ import {
   setTimeFromPicker,
   mouseDown,
   selectObject,
-  deselectObject,
+  removeFilters,
   shiftTime,
   setLocationFromBrowser,
   toggleTimeNow,
@@ -255,10 +255,10 @@ document.addEventListener(
         controls.enabled = false;
         break;
       case "Escape":
-        deselectObject();
+        removeFilters();
         break;
       case "+":
-        shiftTime(-SCROLL_AMOUNT);
+        shiftTime(-SCROLL_AMOUNT);escape
         break;
       case "-":
         shiftTime(SCROLL_AMOUNT);

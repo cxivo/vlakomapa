@@ -11,6 +11,7 @@ import { stations, trains, scene, map, db, camera, controls } from "./main";
 let lines = [];
 let date = new Date();
 let filteredTrains = [];
+let foundTrain = null;
 let foundTrainLine = null;
 let selectedStationLine = null;
 let mousePressedAt = new Date();
@@ -145,6 +146,10 @@ function addTrain(train, offset, special = false) {
     line.name = "TRAIN" + offsetChar + train.id;
 
     if (special) {
+      foundTrain = train;
+      if (foundTrainLine != null) {
+        scene.remove(foundTrainLine);
+      }
       foundTrainLine = line;
       line.position.y = lines[0].position.y;
     }
@@ -191,8 +196,11 @@ function addTrainsAroundDate(date) {
 
     // draws trains with the corresponding offset
     filteredTrains.forEach((train) => {
-      if (trainsGoingIds.has(train.id)) {
+      if (trainsGoingIds.has(train.id)) {      
         addTrain(train, (1 - i) * 24 * 60 * 60);
+        if (foundTrain?.id == train.id) {
+          addTrain(train, (1 - i) * 24 * 60 * 60, true);
+        }
       }
     });
   }
@@ -494,7 +502,7 @@ export function filterTrainsByStation() {
 }
 
 export function filterTrainsByLine() {
-  if (foundTrainLine != null) {
+  if (foundTrain != null) {
     // also keeps trains with which it is impossible to transfer, but they pass thru (or stop at) the same stations
     const common = new Set(
       db
@@ -509,7 +517,7 @@ export function filterTrainsByLine() {
               JOIN shapes AS sh2 ON sh2.shape_id = t2.shape_id 
               JOIN stops AS st2 ON sh2.shape_pt_lat = st2.stop_lat AND sh2.shape_pt_lon = st2.stop_lon
               WHERE st2.stop_lat = st1.stop_lat AND st2.stop_lon = st1.stop_lon
-              AND t2.trip_id = ${foundTrainLine.id}
+              AND t2.trip_id = ${foundTrain.id}
             );`
         )[0]
         .values?.map((x) => x[0])
@@ -554,8 +562,8 @@ export function searchTrain() {
 
   const trainName = document.getElementById("train-choice").value;
   console.log(trainName);
-  const foundTrain = getTrainFromName(trainName);
-  console.log("found train: ", foundTrain);
+  const train = getTrainFromName(trainName);
+  console.log("found train: ", train);
 
   // check whether it's running on this day
   // need to offset the timezone, because otherwise the date won't be calculated correctly
@@ -583,19 +591,19 @@ export function searchTrain() {
       ?.values?.map((x) => x[0])
   );
 
-  if (trainsGoingIds.has(foundTrain.id)) {
+  if (trainsGoingIds.has(train.id)) {
     // filter maybe
-    foundTrainLine = foundTrain;
+    foundTrain = train;
     filterTrainsByLine();
 
-    addTrain(foundTrain, 0 * 24 * 60 * 60, true);
-    writeTrainInfo(foundTrain);
+    addTrain(train, 0 * 24 * 60 * 60, true);
+    writeTrainInfo(train);
     document.getElementById("train-info").style.display = "block";
 
     // zoom on the "center" of the selected line
-    const startStop = getStopFromId(foundTrain.journey[0].stopId);
+    const startStop = getStopFromId(train.journey[0].stopId);
     const destinationStop = getStopFromId(
-      foundTrain.journey[foundTrain.journey.length - 1].stopId
+      train.journey[train.journey.length - 1].stopId
     );
     centerOn(
       0.5 * (startStop.lat + destinationStop.lat),
@@ -604,12 +612,10 @@ export function searchTrain() {
 
     // set time to departure
     date.setHours(0, 0, 0, 0); // get number of UTC seconds till the start of the day
-    setTime(new Date(date.getTime() + foundTrain.journey[0].departure * 1000));
+    setTime(new Date(date.getTime() + train.journey[0].departure * 1000));
   } else {
-    console.log(`Train ${foundTrain.id} isn't running on ${dateStringToday}`);
-    alert(
-      `Vlak ${foundTrain.name} v dátum ${date.toLocaleDateString()} nepremáva.`
-    );
+    console.log(`Train ${train.id} isn't running on ${dateStringToday}`);
+    alert(`Vlak ${train.name} v dátum ${date.toLocaleDateString()} nepremáva.`);
   }
 }
 
@@ -655,11 +661,11 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
       intersects[i].distance <= maxDistance
     ) {
       // TRAIN
-      const foundTrain = getTrainFromId(
+      const train = getTrainFromId(
         new Number(intersects[i].object.name.substring(6))
       );
 
-      console.log("trip id: " + foundTrain.id);
+      console.log("trip id: " + train.id);
 
       // just to be sure, add highlights for all 3 shown days
       let multiplier = 0;
@@ -671,9 +677,9 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
         multiplier = -1;
       }
 
-      addTrain(foundTrain, multiplier * 24 * 60 * 60, true);
+      addTrain(train, multiplier * 24 * 60 * 60, true);
 
-      writeTrainInfo(foundTrain);
+      writeTrainInfo(train);
       document.getElementById("train-info").style.display = "block";
       return true;
     }
@@ -683,10 +689,15 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
 }
 
 function deselectLine() {
+  document.getElementById("train-info").innerHTML = "";
+  document.getElementById("train-info").style.display = "none";
+
   if (foundTrainLine != null) {
     scene.remove(foundTrainLine);
     foundTrainLine = null;
   }
+
+  foundTrain = null;
 }
 
 export function selectObject(event) {
@@ -695,8 +706,6 @@ export function selectObject(event) {
     return;
   }
 
-  document.getElementById("train-info").innerHTML = "";
-  document.getElementById("train-info").style.display = "none";
   deselectLine();
 
   // calculate pointer position in normalized device coordinates
@@ -729,16 +738,11 @@ export function selectObject(event) {
   }
 }
 
-export function deselectObject() {
+export function removeFilters() {
   // resets filter and info
   document.getElementById("place-choice").value = "";
   document.getElementById("train-choice").value = "";
-  document.getElementById("train-info").innerHTML = "";
-  document.getElementById("train-info").style.display = "none";
   filterTrainsByStation();
-
-  // removes selection highlights
-  deselectLine();
 
   if (selectedStationLine != null) {
     scene.remove(selectedStationLine);
@@ -837,10 +841,10 @@ function writeTrainInfo(train) {
       <a class="useful-link" href="https://cp.sk/vlak/spojenie/vysledky/?date=${date
         .toLocaleDateString()
         .replaceAll(" ", "")}&time=${secondsToTime(
-        train.journey[0].departure
-      )}&f=${getStopFromId(train.journey[0].stopId).name}&fc=100003&t=${
-        getStopFromId(train.journey[train.journey.length - 1].stopId).name
-      }&tc=100003" target="_blank">
+    train.journey[0].departure
+  )}&f=${getStopFromId(train.journey[0].stopId).name}&fc=100003&t=${
+    getStopFromId(train.journey[train.journey.length - 1].stopId).name
+  }&tc=100003" target="_blank">
         cp.sk
       </a>
     </p>`;
