@@ -9,7 +9,7 @@ import { TRAINS } from "./trainTypes";
 import { stations, trains, scene, map, db, camera, controls } from "./main";
 
 let lines = [];
-let date = new Date();
+let date = new Date("2025-11-25 12:00");
 let filteredTrains = [];
 let foundTrain = null;
 let foundTrainLine = null;

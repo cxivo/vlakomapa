@@ -143,6 +143,16 @@ li {
   color: #8080ff;
 }
 
+.copyleft {
+  position: absolute;
+  color: #ffffff;
+  bottom: 8px;
+  left: 16px;
+  text-align: left;
+  padding: 8px;
+  background-color: #00000077;
+}
+
 .controls {
   position: absolute;
   top: 8px;
