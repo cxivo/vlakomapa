@@ -9,7 +9,7 @@ import { TRAINS } from "./trainTypes";
 import { stations, trains, scene, map, db, camera, controls } from "./main";
 
 let lines = [];
-let date = new Date("2025-11-25 12:00");
+let date = new Date();
 let filteredTrains = [];
 let foundTrain = null;
 let foundTrainLine = null;
@@ -163,7 +163,7 @@ function addTrainsAroundDate(date) {
   // need to offset the timezone, because otherwise the date won't be calculated correctly
   date = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
 
-  const dateStringToday = date
+  /*const dateStringToday = date
     .toISOString()
     .substring(0, 10)
     .replaceAll("-", "");
@@ -174,9 +174,16 @@ function addTrainsAroundDate(date) {
   const dateStringTomorrow = new Date(date.getTime() + 24 * 60 * 60 * 1000)
     .toISOString()
     .substring(0, 10)
-    .replaceAll("-", "");
+    .replaceAll("-", "");*/
 
-  const dates = [dateStringYesterday, dateStringToday, dateStringTomorrow];
+  const dateToday = date.getDay();
+  const dateYesterday = new Date(date.getTime() - 24 * 60 * 60 * 1000).getDay();
+  const dateTomorrow = new Date(date.getTime() + 24 * 60 * 60 * 1000).getDay();
+
+  const days_of_week = ["sunday","monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+
+  const days = [days_of_week[dateYesterday], days_of_week[dateToday], days_of_week[dateTomorrow]];
+
 
   // fetches the trains going today, yesterday and tomorrow
   for (let i = 0; i < 3; i++) {
@@ -202,6 +209,8 @@ function addTrainsAroundDate(date) {
         .exec(
           `SELECT trips.trip_id 
             FROM trips 
+            JOIN calendar ON calendar.service_id = trips.service_id
+            WHERE calendar.${days[i]} = 1
             ORDER BY trips.trip_id;`
         )[0]
         ?.values?.map((x) => x[0])
@@ -593,18 +602,22 @@ export function searchTrain() {
     .substring(0, 10)
     .replaceAll("-", "");
 
-  // fetches the trains going today, yesterday and tomorrow
+  // need to offset the timezone, because otherwise the date won't be calculated correctly
+  const days_of_week = ["sunday","monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
+  date = days_of_week[new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000).getDay()];
+ 
+
+
+  // TEMPORARY - ALL TRAINS
   const trainsGoingIds = new Set(
     db
       .exec(
         `SELECT trips.trip_id 
-            FROM dates 
-            JOIN trips ON dates.service_id = trips.service_id 
-            WHERE dates.date = ` +
-          dateStringToday +
-          ` AND dates.exception_type = 1
-            ORDER BY trips.trip_id;`
+          FROM trips 
+          JOIN calendar ON calendar.service_id = trips.service_id
+          WHERE calendar.${days[i]} = 1
+          ORDER BY trips.trip_id;`
       )[0]
       ?.values?.map((x) => x[0])
   );
