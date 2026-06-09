@@ -180,6 +180,7 @@ function addTrainsAroundDate(date) {
 
   // fetches the trains going today, yesterday and tomorrow
   for (let i = 0; i < 3; i++) {
+    /* TEMPORARY
     const trainsGoingIds = new Set(
       db
         .exec(
@@ -189,6 +190,18 @@ function addTrainsAroundDate(date) {
             WHERE dates.date = ` +
             dates[i] +
             ` AND dates.exception_type = 1
+            ORDER BY trips.trip_id;`
+        )[0]
+        ?.values?.map((x) => x[0])
+    );
+    */
+
+    // TEMPORARY - ALL TRAINS
+    const trainsGoingIds = new Set(
+      db
+        .exec(
+          `SELECT trips.trip_id 
+            FROM trips 
             ORDER BY trips.trip_id;`
         )[0]
         ?.values?.map((x) => x[0])
@@ -369,22 +382,24 @@ export function loadTrains() {
       `SELECT trips.trip_id, trips.service_id, trips.trip_headsign, trips.trip_short_name, 
       trips.direction_id, trips.shape_id, routes.route_long_name 
       FROM trips JOIN routes ON trips.route_id = routes.route_id
-      WHERE trips.trip_id < 20000000
       ORDER BY trips.trip_id`
     )[0]
     .values.map(
       (x) =>
         new Train(
-          Number(x[0]),
-          Number(x[1]),
-          Number(x[5]),
-          x[2],
-          x[3],
+          x[0],
+          x[1],
+          x[5],
+          x[2] ?? "",
+          x[3] ?? "",
           x[6],
-          Number(x[4])
+          x[4]
         )
     )
     .filter((x) => !x.name.includes("/")); // Warning! this filters all through coaches, which is usually desirable (they clutter the map), but not always
+
+    console.log(`loaded ${trains.length} trains`);
+    console.log(trains);
 
   const allPlaces = db.exec(
     `SELECT trips.trip_id, stops.stop_id, shapes.shape_pt_sequence, stop_times.arrival_time, stop_times.departure_time 
@@ -420,6 +435,9 @@ export function loadTrains() {
       );
       placePos += 1;
     }
+
+    console.log(`train ${train.id} goes through ${places.length} places`);
+    console.log(places);
 
     // define remaining times
     let lastDeparture = places[0].departure;
@@ -458,7 +476,7 @@ export function loadStations() {
   return db
     .exec("SELECT * FROM stops ORDER BY stops.stop_id")[0]
     .values.map(
-      (x) => new Station(Number(x[0]), x[1], Number(x[2]), Number(x[3]))
+      (x) => new Station(x[0], x[1], Number(x[2]), Number(x[3]))
     );
 }
 
@@ -649,7 +667,7 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
     ) {
       // STATION
       const stop = getStopFromId(
-        new Number(intersects[i].object.name.substring(8))
+        intersects[i].object.name.substring(8)
       );
       document.getElementById("place-choice").value = stop.name;
 
@@ -662,7 +680,7 @@ function tryRayCast(pointerX, pointerY, radius, minDistance) {
     ) {
       // TRAIN
       const train = getTrainFromId(
-        new Number(intersects[i].object.name.substring(6))
+        intersects[i].object.name.substring(6)
       );
 
       console.log("trip id: " + train.id);

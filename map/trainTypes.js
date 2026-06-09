@@ -8,6 +8,7 @@ export const TRAINS = {
   TRAIN_IC: { color: 0x7f9fff, shown: true },
   TRAIN_SC: { color: 0xff009f, shown: true },
   TRAIN_EN: { color: 0x00007f, shown: true },
-  TRAIN_RJX: { color: 0xffff00, shown: true },
+  TRAIN_RJX: { color: 0x7f0000, shown: true },
+  TRAIN_RJ: { color: 0xffaf00, shown: true },
   TRAIN_UNKNOWN: { color: 0x7f7f7f, shown: true },
 };

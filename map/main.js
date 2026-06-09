@@ -193,6 +193,9 @@ document
   .getElementById("train_rjx")
   .addEventListener("click", updateCategories);
 document
+  .getElementById("train_rj")
+  .addEventListener("click", updateCategories);
+document
   .getElementById("train_unknown")
   .addEventListener("click", updateCategories);
 

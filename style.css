@@ -10,7 +10,8 @@
   --ic: #7f9fff;
   --sc: #ff009f;
   --en: #00007f;
-  --rjx: #c1c105;
+  --rjx: #7f0000;
+  --rj: #ffaf00;
   --unknown: #7f7f7f;
 }
 
@@ -101,6 +102,15 @@
 
 .bg-rjx {
   background-color: var(--rjx);
+  color: #000;
+}
+
+.rj {
+  color: var(--rj);
+}
+
+.bg-rj {
+  background-color: var(--rj);
   color: #000;
 }
 

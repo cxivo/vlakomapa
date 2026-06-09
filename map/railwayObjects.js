@@ -54,6 +54,8 @@ export class Train {
       this.type = TRAINS.TRAIN_EN;
     } else if (this.name.startsWith("EC")) {
       this.type = TRAINS.TRAIN_EC;
+    } else if (this.name.startsWith("RJ")) {
+      this.type = TRAINS.TRAIN_RJ;
     } else if (this.name.startsWith("R")) {
       this.type = TRAINS.TRAIN_R;
     } else {
